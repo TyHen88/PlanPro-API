@@ -4,9 +4,9 @@ builder = "dockerfile"
 [deploy]
 startCommand = "java -jar build/libs/planpro-0.0.1-SNAPSHOT.jar"   
 healthcheckPath = "/actuator/health"
-healthcheckTimeout = 100
+healthcheckTimeout = 300
 restartPolicyType = "on_failure"
 
 [env]
-PORT = "8088"
-SPRING_PROFILES_ACTIVE = "prod"
+PORT = "8080"
+SPRING_PROFILES_ACTIVE = "production"
