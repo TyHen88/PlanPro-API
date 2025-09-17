@@ -6,6 +6,12 @@ spring:
     driver-class-name: org.postgresql.Driver
     username: ${PGUSER}
     password: ${PGPASSWORD}
+    hikari:
+      connection-timeout: 20000
+      maximum-pool-size: 5
+      minimum-idle: 1
+      idle-timeout: 300000
+      max-lifetime: 1200000
   jpa:
     hibernate:
       ddl-auto: update
@@ -44,6 +50,15 @@ management:
   endpoint:
     health:
       show-details: always
+      enabled: true
+      probes:
+        enabled: true
+  health:
+    db:
+      enabled: true
+    diskspace:
+      enabled: false
+    defaults:
       enabled: true
 
 # JSONB Configuration

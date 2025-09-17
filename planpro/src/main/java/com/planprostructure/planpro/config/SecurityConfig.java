@@ -84,7 +84,8 @@ public class SecurityConfig {
                                 "/swagger-ui.html**",
                                 "/swagger.json",
                                 "/swagger-ui/**",
-                                "/swagger-ui/index.html"
+                                "/swagger-ui/index.html",
+                                "/actuator/**"
 
                         ).permitAll()
                        .requestMatchers(

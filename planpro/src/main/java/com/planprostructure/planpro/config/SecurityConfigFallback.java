@@ -77,7 +77,8 @@ public class SecurityConfigFallback {
                                 "/swagger.json",
                                 "/swagger-ui/**",
                                 "/swagger-ui/index.html",
-                                "/api/**"
+                                "/api/**",
+                                "/actuator/**"
                         ).permitAll()
                         .requestMatchers(
                                 "/api/wb/v1/users/**",

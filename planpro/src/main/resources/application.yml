@@ -1,12 +1,13 @@
 spring:
   profiles:
-    active: production
+    active: local
     include: quartz
   main:
     allow-circular-references: true
 jwt:
   expiration: 86400000 # 24 hours in milliseconds
 
-rsa:
-  public-key: classpath:certs/public-key.pem
-  private-key: classpath:certs/private-key.pem
+# RSA configuration is handled in profile-specific files
+# rsa:
+#   public-key: classpath:certs/public-key.pem
+#   private-key: classpath:certs/private-key.pem
