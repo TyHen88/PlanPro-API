@@ -13,11 +13,24 @@ public class TelegramUserInfoResponse {
     private String username;
     private String firstName;
     private String lastName;
+    private String phoneNumber;
+    private boolean isActive;
+    private boolean isConnected;
+    private String currentState;
+    private String createdAt;
+    private String updatedAt;
 
     @Builder
-    public TelegramUserInfoResponse(Long id, String username, String firstName, String lastName) {
+    public TelegramUserInfoResponse(Long id, String username, String firstName, String lastName, String phoneNumber, boolean isActive, boolean isConnected, String currentState, String createdAt, String updatedAt) {
         this.id = id;
         this.username = username;
         this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
+        this.isActive = isActive;
+        this.isConnected = isConnected;
+        this.currentState = currentState;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 }

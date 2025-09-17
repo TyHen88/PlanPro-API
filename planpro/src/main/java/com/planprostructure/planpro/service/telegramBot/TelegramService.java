@@ -1,7 +1,5 @@
 package com.planprostructure.planpro.service.telegramBot;
 
-import com.planprostructure.planpro.domain.telegramBot.TelegramBotUser;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.User;
 
 public interface TelegramService {
@@ -13,4 +11,12 @@ public interface TelegramService {
     Object verifyTelegramUser(Long chatId) throws Throwable;
 
     Object getTelegramUserByChatId() throws Throwable;
+
+    void disconnectTelegram(Long telegramUserId) throws Throwable;
+
+    void telegramSetting(Long chatId, boolean isActive) throws Throwable;
+
+    Object getHistoryOfTelegramUser() throws Throwable;
+
+    void reconnectTelegram(Long chatId) throws Throwable;
 }

@@ -1,0 +1,17 @@
+{"properties": [
+  {
+    "name": "spring.ai.openai.api-key",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.ai.openai.api-key'"
+  },
+  {
+    "name": "spring.ai.openai.base-url",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.ai.openai.base-url'"
+  },
+  {
+    "name": "spring.ai.gemini.api-key",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.ai.gemini.api-key'"
+  }
+]}

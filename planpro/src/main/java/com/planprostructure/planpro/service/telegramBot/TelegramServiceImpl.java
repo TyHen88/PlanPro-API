@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.User;
 
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -69,6 +70,81 @@ public class TelegramServiceImpl implements TelegramService {
     }
 
     @Override
+    @Transactional
+    public void disconnectTelegram(Long telegramUserId) throws Throwable {
+        var telegramUserOpt = telegramBotUserRepository.findByChatId(telegramUserId);
+        if (telegramUserOpt.isPresent()) {
+            TelegramBotUser telegramUser = telegramUserOpt.get();
+            telegramUser.setConnected(false);
+            telegramUser.setActive(false);
+            telegramBotUserRepository.save(telegramUser);
+            logger.info("Disconnected Telegram user {} from PlanPro user {}", telegramUserId, telegramUser.getUserId());
+        } else {
+            logger.warn("No Telegram user found with ID: {}", telegramUserId);
+            throw new BusinessException(StatusCode.NOT_FOUND, "Telegram user not found");
+        }
+    }
+
+    @Override
+    @Transactional
+    public void reconnectTelegram(Long chatId) throws Throwable {
+        var telegramUserOpt = telegramBotUserRepository.findByChatId(chatId);
+        if (telegramUserOpt.isPresent()) {
+            TelegramBotUser telegramUser = telegramUserOpt.get();
+
+            // If the user is already connected, set all other connected records for this userId to false
+            if (!telegramUser.isConnected()) {
+                Long userId = telegramUser.getUserId();
+                if (userId != null) {
+                    // Find all TelegramBotUser records for this userId with connected = true
+                    var connectedUsers = telegramBotUserRepository.findByUserId(userId)
+                        .stream()
+                        .filter(u -> u.isConnected() && !u.getChatId().equals(chatId))
+                        .collect(Collectors.toList());
+                    for (TelegramBotUser u : connectedUsers) {
+                        u.setConnected(false);
+                        telegramBotUserRepository.save(u);
+                    }
+                }
+                telegramUser.setConnected(true);
+                telegramBotUserRepository.save(telegramUser);
+                logger.info("Reconnected Telegram user {} to PlanPro user {}", chatId, telegramUser.getUserId());
+            } else {
+                // If already connected, still ensure all others are disconnected
+                Long userId = telegramUser.getUserId();
+                if (userId != null) {
+                    var connectedUsers = telegramBotUserRepository.findByUserId(userId)
+                        .stream()
+                        .filter(u -> u.isConnected() && !u.getChatId().equals(chatId))
+                        .collect(Collectors.toList());
+                    for (TelegramBotUser u : connectedUsers) {
+                        u.setConnected(false);
+                        telegramBotUserRepository.save(u);
+                    }
+                }
+                logger.info("Telegram user {} is already connected. Ensured all other connections are set to false.", chatId);
+            }
+        } else {
+            logger.warn("No Telegram user found with chat ID: {}", chatId);
+            throw new BusinessException(StatusCode.NOT_FOUND, "Telegram user not found");
+        }
+    }
+
+    @Override
+    @Transactional
+    public void telegramSetting(Long chatId, boolean isActive) throws Throwable {
+        var telegramUserOpt = telegramBotUserRepository.findByChatId(chatId);
+        if (telegramUserOpt.isPresent()) {
+            TelegramBotUser telegramUser = telegramUserOpt.get();
+            telegramUser.setActive(isActive);
+            telegramBotUserRepository.save(telegramUser);
+        } else {
+            logger.warn("No Telegram user found with chat ID: {}", chatId);
+            throw new BusinessException(StatusCode.NOT_FOUND, "Telegram user not found");
+        }
+    }
+
+    @Override
     public Object verifyTelegramUser(Long chatId) {
         var telegramUserOpt = telegramBotUserRepository.findByChatId(chatId).
                 orElseThrow(() -> new BusinessException(StatusCode.NOT_FOUND));
@@ -82,10 +158,38 @@ public class TelegramServiceImpl implements TelegramService {
 
     @Override
     public Object getTelegramUserByChatId() throws Throwable {
-        return telegramBotUserRepository.findByUserIdAndChatId(AuthHelper.getUserId())
-                .orElse(null);
+        var telegramUserOpt = telegramBotUserRepository.findByUserIdAndChatId(AuthHelper.getUserId());
+        if (telegramUserOpt.isPresent()) {
+            return telegramUserOpt.get();
+        } else {
+            logger.warn("No Telegram user found with user ID: {}", AuthHelper.getUserId());
+            return null;
+        }
     }
 
+    @Override
+    public Object getHistoryOfTelegramUser() throws Throwable {
+        Long userId = AuthHelper.getUserId();
+        var telegramUserOpt = telegramBotUserRepository.findByUserId(userId);
+        if (telegramUserOpt.size() > 0) {
+            return telegramUserOpt.stream().map(
+                telegramUser -> TelegramUserInfoResponse.builder().
+                id(telegramUser.getChatId()).
+                firstName(telegramUser.getFirstName()).
+                lastName(telegramUser.getLastName()).
+                username(telegramUser.getUsername()).
+                phoneNumber(telegramUser.getPhoneNumber()).
+                isActive(telegramUser.isActive()).
+                isConnected(telegramUser.isConnected()).
+                currentState(telegramUser.getCurrentState()).
+                createdAt(telegramUser.getCreatedAt().toString()).
+                build()
+            ).collect(Collectors.toList());
+        } else {
+            logger.warn("No Telegram user found with user ID: {}", userId);
+            return null;
+        }
+    }
 
     private String createNewUser(User telegramUser, long chatId) {
         TelegramBotUser newUser = new TelegramBotUser();
@@ -94,6 +198,7 @@ public class TelegramServiceImpl implements TelegramService {
         newUser.setFirstName(telegramUser.getFirstName());
         newUser.setLastName(telegramUser.getLastName());
         newUser.setActive(true);
+        newUser.setConnected(true);
         newUser.setCurrentState(BotState.STARTED.name());
 
         try {

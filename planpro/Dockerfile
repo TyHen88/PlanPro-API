@@ -1,35 +1,44 @@
-# Build stage
+# ---------- Build stage ----------
 FROM gradle:8.5-jdk17 AS builder
 WORKDIR /app
 
-# Copy gradle files first for better caching
-COPY gradle gradle/
-COPY gradlew build.gradle settings.gradle ./
+# Cache Gradle deps better by copying metadata first
+COPY gradle gradle
+COPY gradlew settings.gradle build.gradle ./
+RUN chmod +x gradlew && ./gradlew --no-daemon dependencies || true
 
-# Download dependencies (this will be cached)
-RUN gradle dependencies --no-daemon
+# Now bring in sources
+COPY . .
+RUN ./gradlew clean bootJar -x test --no-daemon
 
-# Copy source code
-COPY src src/
-
-# Build the application
-RUN gradle build --no-daemon
-
-# Runtime stage
-FROM openjdk:17-jdk-slim
+# ---------- Runtime stage ----------
+FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 
-# Create uploads directory
-RUN mkdir -p /tmp/uploads
+# Install curl for health checks
+RUN apk add --no-cache curl
 
-# Copy the built jar
+# Create the directory your app actually uses (matches application.yml)
+RUN mkdir -p /tmp/upload-files/temp_qr
+
+# Copy the fat jar
 COPY --from=builder /app/build/libs/*.jar app.jar
 
-# Expose port (Railway will set PORT environment variable)
-EXPOSE 9090
+# Copy startup script
+COPY startup.sh startup.sh
+RUN chmod +x startup.sh
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:${PORT:-9090}/actuator/health || exit 1
+# Do NOT rely on env in EXPOSE; it's a build-time hint only
+EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Set default port for Railway
+ENV PORT=8080
+ENV SPRING_PROFILES_ACTIVE=railway
+
+# Healthcheck for Railway (simplified)
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+  CMD curl -f http://localhost:8080/actuator/health || exit 1
+
+# Run on the port Railway provides (fallback 8080 locally)
+# Use exec form for better signal handling
+ENTRYPOINT ["./startup.sh"]

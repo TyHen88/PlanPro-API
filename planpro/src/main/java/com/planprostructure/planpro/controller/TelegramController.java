@@ -29,4 +29,27 @@ public class TelegramController extends ProPlanRestController {
         return ok(telegramService.getTelegramUserByChatId());
     }
 
+    @PutMapping("/disconnect-telegram/{chatId}")
+    public Object disconnectTelegram(@PathVariable Long chatId) throws Throwable {
+        telegramService.disconnectTelegram(chatId);
+        return ok();
+    }
+
+    @PutMapping("/telegram-setting/{chatId}/{isActive}")
+    public Object telegramSetting(@PathVariable Long chatId, @PathVariable boolean isActive) throws Throwable {
+        telegramService.telegramSetting(chatId, isActive);
+        return ok();
+    }
+
+    @GetMapping("/get-history-of-telegram-user")
+    public Object getHistoryOfTelegramUser() throws Throwable {
+        return ok(telegramService.getHistoryOfTelegramUser());
+    }
+
+    @PutMapping("/reconnect-telegram/{chatId}")
+    public Object reconnectTelegram(@PathVariable Long chatId) throws Throwable {
+        telegramService.reconnectTelegram(chatId);
+        return ok();
+    }
+
 }

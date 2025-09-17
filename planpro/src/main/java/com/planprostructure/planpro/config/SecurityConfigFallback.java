@@ -2,14 +2,12 @@ package com.planprostructure.planpro.config;
 
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
-import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
-import com.planprostructure.planpro.properties.RsaKeyProperties;
 import com.planprostructure.planpro.service.auth.UserAuthServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,12 +27,14 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-@ConditionalOnProperty(prefix = "rsa", name = "private-key")
-public class SecurityConfig {
-    private final RsaKeyProperties rsaKeys;
+@ConditionalOnProperty(prefix = "rsa", name = "private-key", havingValue = "false", matchIfMissing = true)
+public class SecurityConfigFallback {
     private final UnauthorizedHandler unauthorizedHandler;
     private final AccessDeniedHandler accessDeniedHandler;
     private final CustomJwtAuthenticationConverter customJwtAuthenticationConverter;
@@ -50,14 +50,6 @@ public class SecurityConfig {
         return new ProviderManager(authProvider);
     }
 
-    /**
-     * 1 - Disable Cross-Site Request Forgery (CSRF)
-     * 2 - The user should be authenticated for any request in the application.
-     * 3 - Spring Security will never create an HttpSession and it will never use it to obtain the Security Context.
-     * 4 - Spring Security's HTTP Basic Authentication support is enabled by default. However, as soon as any servlet-based configuration is provided, HTTP Basic must be explicitly provided.
-     * WARNING
-     * Never disable CSRF protection while leaving session management enabled! Doing so will open you up to a Cross-Site Request Forgery attack.
-     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
@@ -84,10 +76,10 @@ public class SecurityConfig {
                                 "/swagger-ui.html**",
                                 "/swagger.json",
                                 "/swagger-ui/**",
-                                "/swagger-ui/index.html"
-
+                                "/swagger-ui/index.html",
+                                "/api/**"
                         ).permitAll()
-                       .requestMatchers(
+                        .requestMatchers(
                                 "/api/wb/v1/users/**",
                                 "/api/wb/v1/trips/**",
                                 "/api/wb/v1/files/upload-image",
@@ -98,10 +90,8 @@ public class SecurityConfig {
                                 "/api/v1/chat/**",
                                 "/api/v1/conversations/**",
                                 "/api/v1/message/**",
-                                "/api/v1/contacts/**",  
-                                "/api/wb/v1/reminders/**"
-                                
-                       ).authenticated()
+                                "/api/v1/contacts/**"
+                        ).authenticated()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exceptionHandling -> exceptionHandling
@@ -124,15 +114,19 @@ public class SecurityConfig {
     @Bean
     @Primary
     JwtDecoder jwtDecoder() {
-        return NimbusJwtDecoder.withPublicKey(rsaKeys.publicKey()).build();
+        // Use a simple secret key for JWT decoding
+        String secret = "your-secret-key-here-make-it-long-enough-for-hs256-algorithm";
+        SecretKey key = new SecretKeySpec(secret.getBytes(), "HmacSHA256");
+        return NimbusJwtDecoder.withSecretKey(key).build();
     }
 
     @Bean
     @Primary
     JwtEncoder jwtEncoder() {
-        JWK jwk = new RSAKey.Builder(rsaKeys.publicKey())
-                .privateKey(rsaKeys.privateKey())
-                .build();
+        // Use a simple secret key for JWT encoding
+        String secret = "your-secret-key-here-make-it-long-enough-for-hs256-algorithm";
+        SecretKey key = new SecretKeySpec(secret.getBytes(), "HmacSHA256");
+        JWK jwk = new com.nimbusds.jose.jwk.OctetSequenceKey.Builder(key).build();
         JWKSource<SecurityContext> jwkSource = new ImmutableJWKSet<>(new JWKSet(jwk));
         return new NimbusJwtEncoder(jwkSource);
     }

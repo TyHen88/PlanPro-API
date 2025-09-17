@@ -26,8 +26,10 @@ public class TelegramBotUser extends UpdatableEntity {
     private String lastName;
     private String phoneNumber;
     private String currentState;
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "boolean default true")
     private boolean active = true;
+    @Column(nullable = false, columnDefinition = "boolean default true")
+    private boolean connected = true;
 
     @Builder
     public TelegramBotUser(Long chatId, Long userId, String username, String firstName, String lastName, String phoneNumber, String currentState) {

@@ -16,17 +16,17 @@ public abstract class ProPlanRestController {
         return ResponseEntity.ok().headers(headers).body(apiResponse);
 
     }
-    public <T> ResponseEntity<ApiResponse<?>> buildResponse(HttpStatus status, T data, HttpHeaders headers, Common common) {
+    // public <T> ResponseEntity<ApiResponse<?>> buildResponse(HttpStatus status, T data, HttpHeaders headers, Common common) {
 
-        ApiResponse<?> apiResponse = ApiResponse.builder()
-                .status(StatusCode.SUCCESS)
-                .data(data)
-                .common(common)
-                .build();
+    //     ApiResponse<?> apiResponse = ApiResponse.builder()
+    //             .status(StatusCode.SUCCESS)
+    //             .data(data)
+    //             .common(common)
+    //             .build();
 
-        return ResponseEntity.ok().headers(headers).body(apiResponse);
+    //     return ResponseEntity.ok().headers(headers).body(apiResponse);
 
-    }
+    // }
 
 
     public <T> ResponseEntity<ApiResponse<?>> ok(T data, HttpHeaders headers) {
@@ -47,11 +47,11 @@ public abstract class ProPlanRestController {
 
     }
 
-    public <T> ResponseEntity<ApiResponse<?>> ok(T data,Common common) {
+    // public <T> ResponseEntity<ApiResponse<?>> ok(T data,Common common) {
 
-        return buildResponse(HttpStatus.OK, data,new HttpHeaders(),common);
+    //     return buildResponse(HttpStatus.OK, data,new HttpHeaders(),common);
 
-    }
+    // }
 
     public <T> ResponseEntity<ApiResponse<?>> buildResponse(HttpStatus status)
     {
@@ -66,11 +66,11 @@ public abstract class ProPlanRestController {
 
     }
 
-    public <T> ResponseEntity<ApiResponse<?>> ok(Common common) {
+    // public <T> ResponseEntity<ApiResponse<?>> ok(Common common) {
 
-        return buildResponse(HttpStatus.OK, new EmptyJsonResponse(),new HttpHeaders(),common);
+    //     return buildResponse(HttpStatus.OK, new EmptyJsonResponse(),new HttpHeaders(),common);
 
-    }
+    // }
 
 }
 

@@ -55,6 +55,6 @@ public class AuthController extends ProPlanRestController {
         @ApiResponse(responseCode = "401", description = "Authentication failed")
     })
     public Object login(@RequestHeader Map<String, String> headers, @RequestBody @Valid LoginRequest payload) throws Throwable{
-        return ok(authService.login(payload),new Common(headers));
+        return ok(authService.login(payload));
     }
 }
