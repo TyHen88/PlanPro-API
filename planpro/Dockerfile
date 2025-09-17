@@ -1,35 +1,52 @@
-# Build stage
-FROM gradle:8.5-jdk17 AS builder
+# Multi-stage build for Railway deployment
+FROM gradle:8.5-jdk17 AS build
+
+# Set working directory
 WORKDIR /app
 
 # Copy gradle files first for better caching
-COPY gradle gradle/
+COPY gradle/ gradle/
 COPY gradlew build.gradle settings.gradle ./
 
-# Download dependencies (this will be cached)
-RUN gradle dependencies --no-daemon
+# Download dependencies
+RUN ./gradlew dependencies --no-daemon
 
 # Copy source code
-COPY src src/
+COPY src/ src/
 
 # Build the application
-RUN gradle build --no-daemon
+RUN ./gradlew build -x test --no-daemon
 
 # Runtime stage
-FROM openjdk:17-jdk-slim
+FROM openjdk:17-jre-slim
+
+# Install necessary packages
+RUN apt-get update && apt-get install -y \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create app user
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+
+# Set working directory
 WORKDIR /app
 
-# Create uploads directory
-RUN mkdir -p /tmp/uploads
+# Copy the built jar from build stage
+COPY --from=build /app/build/libs/*.jar app.jar
 
-# Copy the built jar
-COPY --from=builder /app/build/libs/*.jar app.jar
+# Create necessary directories
+RUN mkdir -p /tmp/upload-files && \
+    chown -R appuser:appuser /app /tmp/upload-files
 
-# Expose port (Railway will set PORT environment variable)
-EXPOSE 9090
+# Switch to app user
+USER appuser
+
+# Expose port
+EXPOSE 8080
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:${PORT:-9090}/actuator/health || exit 1
+  CMD curl -f http://localhost:8080/actuator/health || exit 1
 
+# Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
