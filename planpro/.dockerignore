@@ -1,0 +1,50 @@
+# Git
+.git
+.gitignore
+
+# IDE
+.idea
+.vscode
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Build artifacts
+build/
+.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+!gradle-wrapper.properties
+
+# Test files
+# (keep tests in repo, only ignore outputs if needed)
+# src/test/
+
+# Documentation
+# Keep README.md
+# *.md   <-- remove this if you want docs visible
+
+# Docker
+# Keep Dockerfile for Railway
+# Dockerfile
+.dockerignore
+
+# Railway
+# Keep Railway configs if you use them
+# railway.json
+# railway.toml
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# Temporary files
+*.tmp
+*.temp

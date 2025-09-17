@@ -1,0 +1,104 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  datasource:
+    url: jdbc:postgresql://${PROD_DB_HOST}:${PROD_DB_PORT}/${PROD_DB_NAME}
+    username: ${PROD_DB_USERNAME}
+    password: ${PROD_DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 20000
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 300000
+      max-lifetime: 1200000
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          lob:
+            non_contextual_creation: true
+      javax:
+        persistence:
+          schema-generation:
+            database:
+              action: validate
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+# JSONB Configuration
+json:
+  mapping:
+    pretty-print: false
+
+# Password Encryption
+password:
+  encryption:
+    key: ${PASSWORD_ENCRYPTION_KEY:mytestkeyasdddds}
+
+# Application URLs
+web-url: ${WEB_URL:https://your-app-name.railway.app}
+
+# JWT Configuration
+jwt:
+  expiration: 86400000 # 24 hours in milliseconds
+  issuer: planpro-app
+  secret: ${JWT_SECRET:mySecretKey}
+  expirationMs: 86400000 # 24 hours in milliseconds
+
+# RSA Keys Configuration
+rsa:
+  public-key: classpath:certs/public-key.pem
+  private-key: classpath:certs/private-key.pem
+
+# Logging Configuration
+logging:
+  level:
+    root: warn
+    com.planprostructure.planpro: info
+    org.springframework.security: warn
+    org.hibernate: warn
+
+# File Storage Configuration
+file:
+  server-path: /tmp/upload-files/
+  client-path: /api/v1/image
+  temp-path: ${file.server-path}/temp_qr
+  base-url: ${WEB_URL:https://your-app-name.railway.app}${file.client-path}
+  base-image-url: ${WEB_URL:https://your-app-name.railway.app}
+
+# Telegram Configuration
+telegram-setting:
+  enable: ${TELEGRAM_ENABLED:false}
+  base-url: https://api.telegram.org
+  username: ${TELEGRAM_USERNAME:planproapp_bot}
+  access-token: ${TELEGRAM_ACCESS_TOKEN:7845816657:AAEJxT5tVXW88cDYELYli2ttY5glQsJQq7o}
+  bot-url: https://t.me/${TELEGRAM_USERNAME:planproapp_bot}
+  share-url: https://t.me/${TELEGRAM_USERNAME:planproapp_bot}
+  
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    url: /v3/api-docs
+    disable-swagger-default-url: true
+    operations-sorter: method
+    tags-sorter: alpha
+    display-request-duration: true
+    filter: true
+    try-it-out-enabled: false
+    doc-expansion: none
+    default-models-expand-depth: 1
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  show-actuator: false
+  cache:
+    disabled: true
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
