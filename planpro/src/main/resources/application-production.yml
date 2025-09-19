@@ -69,15 +69,15 @@ json:
 # Password Encryption
 password:
   encryption:
-    key: ${PASSWORD_ENCRYPTION_KEY}
+    key: ${PASSWORD_ENCRYPTION_KEY:mytestkeyasdddds}
     # mytestkeyasdddds
 
 # JWT Configuration
 jwt:
-  expiration: ${JWT_EXPIRATION}
+  expiration: ${JWT_EXPIRATION:86400000}
   # 86400000 # 24 hours in milliseconds
   issuer: planpro-app
-  secret: ${JWT_SECRET}
+  secret: ${JWT_SECRET:mySecretKey}
   # mySecretKey
   # expirationMs: ${JWT_EXPIRATION}
   # 86400000 # 24 hours in milliseconds
