@@ -83,8 +83,8 @@ file:
   server-path: /tmp/upload-files/
   client-path: /api/v1/image
   temp-path: ${file.server-path}/temp_qr
-  base-url: https://planpro-api-production.up.railway.app${file.client-path}
-  base-image-url: https://planpro-api-production.up.railway.app
+  base-url: https://planpro-dev.up.railway.app${file.client-path}
+  base-image-url: https://planpro-dev.up.railway.app
 
 # Telegram Configuration
 telegram-setting:
