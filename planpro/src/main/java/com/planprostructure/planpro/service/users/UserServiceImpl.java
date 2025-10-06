@@ -7,9 +7,14 @@ import com.planprostructure.planpro.domain.users.Users;
 import com.planprostructure.planpro.helper.AuthHelper;
 import com.planprostructure.planpro.payload.users.UpdateProfileRequest;
 import com.planprostructure.planpro.payload.users.UserProfileResponse;
+import com.planprostructure.planpro.payload.users.UserResponseDTO;
 import com.planprostructure.planpro.properties.FileInfoConfig;
 import com.planprostructure.planpro.utils.ImageUtil;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,21 +25,20 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final FileInfoConfig fileInfoConfig;
-//    private final UserChatRepository userChatRepository;
+    // private final UserChatRepository userChatRepository;
 
     @Override
     @Transactional(readOnly = true)
     public UserProfileResponse getProfile() {
 
-        // 1️⃣  Get current user-id directly from the static AuthHelper
+        // 1️⃣ Get current user-id directly from the static AuthHelper
         Long userId = AuthHelper.getUserId();
 
-        // 2️⃣  Load the user from the DB
+        // 2️⃣ Load the user from the DB
         Users user = userRepository.findById(userId)
-                .orElseThrow(() ->
-                        new UsernameNotFoundException("User not found with ID: " + userId));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with ID: " + userId));
 
-        // 3️⃣  Map entity → DTO
+        // 3️⃣ Map entity → DTO
         return UserProfileResponse.builder()
                 .id(user.getId())
                 .username(user.getUsername())
@@ -62,16 +66,16 @@ public class UserServiceImpl implements UserService {
             throw new UsernameNotFoundException("User not found with ID: " + userId);
         }
         // Execute the update query
-//        userRepository.updateProfile(
-//                payload.getUsername(),
-//                payload.getEmail(),
-//                payload.getFirstName(),
-//                payload.getLastName(),
-//                payload.getPhoneNumber(),
-//                payload.getDob(),
-//                payload.getImageUrl(),
-//                userId
-//        );
+        // userRepository.updateProfile(
+        // payload.getUsername(),
+        // payload.getEmail(),
+        // payload.getFirstName(),
+        // payload.getLastName(),
+        // payload.getPhoneNumber(),
+        // payload.getDob(),
+        // payload.getImageUrl(),
+        // userId
+        // );
         user.setUsername(payload.getUsername());
         user.setEmail(payload.getEmail());
         user.setFirstName(payload.getFirstName());
@@ -82,10 +86,20 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
 
+    }
 
-
-
-
-
+    @Override
+    @Transactional(readOnly = true)
+    public List<UserResponseDTO> getAllUsersContacts() {
+        Long userId = AuthHelper.getUserId();
+        return userRepository.findAllUsersContacts(userId).stream().map(user -> UserResponseDTO.builder()
+                .id(user.getId())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .username(user.getUsername())
+                .phoneNumber(user.getPhoneNumber())
+                .role(user.getRole())
+                .profileImageUrl(user.getProfileImageUrl())
+                .build()).collect(Collectors.toList());
     }
 }

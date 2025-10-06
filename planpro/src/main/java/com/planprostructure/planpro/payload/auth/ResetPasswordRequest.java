@@ -9,16 +9,18 @@ public record ResetPasswordRequest(
         @NotBlank
         String sessionId,
 
-        @JsonProperty("phonenumber")
-        String phonenumber,
-
         @JsonProperty("password")
         @Length(max = 50)
         String password,
+                        
+        @JsonProperty("confirm_password")
+        @Length(max = 50)
+        String confirmPassword
 
-        @JsonProperty("otp_code")
-        @NotBlank
-        String otpCode
+
+        // @JsonProperty("otp_code")
+        // @NotBlank
+        // String otpCode
 
 )
 {

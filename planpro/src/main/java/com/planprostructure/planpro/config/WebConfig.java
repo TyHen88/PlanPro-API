@@ -8,12 +8,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 
 import java.util.Properties;
+
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-
     @Bean
-    public HandlerExceptionResolver customHandlerExceptionResolver() {  // Changed method name
+    public HandlerExceptionResolver customHandlerExceptionResolver() { // Changed method name
         SimpleMappingExceptionResolver resolver = new SimpleMappingExceptionResolver();
         Properties mappings = new Properties();
         mappings.setProperty("Exception", "error/500");
@@ -28,7 +28,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
-                .allowedOrigins("http://localhost:3001")
+                .allowedOrigins("http://localhost:3000")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);

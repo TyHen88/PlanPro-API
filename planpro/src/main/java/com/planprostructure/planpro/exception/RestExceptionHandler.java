@@ -288,7 +288,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
      * @param ex BusinessException
      * @return the ApiError object
      */
-
+    @ExceptionHandler(BusinessException.class)
+    protected ResponseEntity<Object> handleBusinessException(BusinessException ex) {
+        AppLogManager.error(ex);
+        
+        StatusCode errorCode = ex.getErrorCode();
+        return buildResponseEntity(new ApiStatus(errorCode.getHttpCode(), errorCode.getMessage()));
+    }
 
     /**
      * Handle handleThrowable

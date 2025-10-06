@@ -22,6 +22,7 @@ public enum StatusCode {
     EMAIL_OR_PHONE_INVALID(40014, "Email or Phone is invalid", 400),
     PAYER_CANNOT_DELETE(40015, "Payer cannot deleted", 400),
     PASSWORD_MUST_BE_ENCRYPTED(40016, "Password must be encrypted", 400),
+    PASSWORD_DOES_NOT_MATCH(40017, "Password does not match", 400),
     BILL_NOT_PAID(40017, "Payer have not paid the previous bill yet", 400),
     BILL_IS_CLOSE(40018, "Bill is closed", 400),
     UN_SUPPORTED_OPERATION(40019, "Unsupported operation", 400),

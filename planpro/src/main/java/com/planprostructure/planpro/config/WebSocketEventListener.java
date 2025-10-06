@@ -8,34 +8,29 @@ import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 import org.springframework.web.socket.messaging.SessionUnsubscribeEvent;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
+import com.planprostructure.planpro.domain.chatRoom.ChatMessage;
+import com.planprostructure.planpro.domain.chatRoom.ChatMessage.MessageType;
+import lombok.RequiredArgsConstructor;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class WebSocketEventListener {
 
-    @EventListener
-    public void handleWebSocketConnectListener(SessionConnectedEvent event) {
-        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-        log.info("Received a new web socket connection: {}", headerAccessor.getSessionId());
-    }
+    private final SimpMessageSendingOperations messagingTemplate;
 
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-        log.info("User disconnected: {}", headerAccessor.getSessionId());
+        String username = (String) headerAccessor.getSessionAttributes().get("username");
+        if (username != null) {
+            log.info("user disconnected: {}", username);
+            var chatMessage = new ChatMessage();
+            chatMessage.setContent(username + " has left the chat");
+            chatMessage.setMessageType(MessageType.LEAVE);
+            messagingTemplate.convertAndSend("/topic/public", chatMessage);
+        }
     }
 
-    @EventListener
-    public void handleWebSocketSubscribeListener(SessionSubscribeEvent event) {
-        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-        String destination = headerAccessor.getDestination();
-        log.info("User subscribed to: {} with session: {}", destination, headerAccessor.getSessionId());
-    }
-
-    @EventListener
-    public void handleWebSocketUnsubscribeListener(SessionUnsubscribeEvent event) {
-        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-        String destination = headerAccessor.getDestination();
-        log.info("User unsubscribed from: {} with session: {}", destination, headerAccessor.getSessionId());
-    }
-} 
+}

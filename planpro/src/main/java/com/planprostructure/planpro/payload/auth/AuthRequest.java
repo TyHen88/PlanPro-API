@@ -12,6 +12,15 @@ import lombok.Setter;
 @NoArgsConstructor
 @Schema(description = "User registration request")
 public class AuthRequest {
+
+    @JsonProperty("first_name")
+    @Schema(description = "First name", example = "John")
+    private String firstName;
+
+    @JsonProperty("last_name")
+    @Schema(description = "Last name", example = "Doe")
+    private String lastName;
+
     @NotNull
     @JsonProperty("user_name")
     @Schema(description = "Username for the account", example = "john_doe", required = true)

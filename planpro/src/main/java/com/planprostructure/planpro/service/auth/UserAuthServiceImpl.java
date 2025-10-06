@@ -21,6 +21,10 @@ public class UserAuthServiceImpl implements UserDetailsService {
     public SecurityUser loadUserByUsername(String username) {
         List<Users> users = userRepository.findByUsername(username);
 
+        if (users.isEmpty()) {
+            throw new UsernameNotFoundException("User not found with username: " + username);
+        }
+
         Users user = users.get(0);
 
         return new SecurityUser(

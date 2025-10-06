@@ -18,8 +18,6 @@
 --     role VARCHAR(10) DEFAULT 'USER' CHECK (role IN ('USER', 'ADMIN')),
 --     phone VARCHAR(255) UNIQUE NOT NULL,
 --     sts CHAR(1) DEFAULT '1' NOT NULL, -- StatusUser enum: 1=ACTIVE, 2=INACTIVE, 3=SUSPENDED, 4=DELETED
---     reset_token VARCHAR(255),
---     reset_token_expiry TIMESTAMP,
 --     gender VARCHAR(50),
 --     profile_image_url VARCHAR(500),
 --     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -316,23 +314,23 @@
 -- -- SECURITY (if needed)
 -- -- =====================================================
 
--- -- User Sessions table (placeholder for future use)
--- CREATE TABLE user_sessions (
---     id BIGSERIAL PRIMARY KEY,
---     user_id BIGINT NOT NULL,
---     session_token VARCHAR(255) UNIQUE NOT NULL,
---     ip_address VARCHAR(45),
---     user_agent TEXT,
---     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
---     expires_at TIMESTAMP NOT NULL,
---     is_active BOOLEAN DEFAULT TRUE,
---     CONSTRAINT fk_sessions_user FOREIGN KEY (user_id) REFERENCES tb_user(id) ON DELETE CASCADE
--- );
+-- -- User Sessions table - Token management for password reset and sessions
+CREATE TABLE tb_user_sessions (
+    id BIGSERIAL PRIMARY KEY,
+    token VARCHAR(255) NOT NULL,
+    user_id BIGINT NOT NULL,
+    expires_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_active BOOLEAN DEFAULT TRUE,
+    CONSTRAINT fk_user_sessions_user FOREIGN KEY (user_id) REFERENCES tb_user(id) ON DELETE CASCADE
+);
 
 -- -- Create indexes for user sessions table
--- CREATE INDEX idx_sessions_user ON user_sessions(user_id);
--- CREATE INDEX idx_sessions_token ON user_sessions(session_token);
--- CREATE INDEX idx_sessions_expires ON user_sessions(expires_at);
+CREATE INDEX idx_user_sessions_user ON tb_user_sessions(user_id);
+CREATE INDEX idx_user_sessions_token ON tb_user_sessions(token);
+CREATE INDEX idx_user_sessions_expires ON tb_user_sessions(expires_at);
+CREATE INDEX idx_user_sessions_active ON tb_user_sessions(is_active);
 
 -- -- =====================================================
 -- -- INDEXES FOR PERFORMANCE

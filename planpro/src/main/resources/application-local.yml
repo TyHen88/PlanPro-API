@@ -59,6 +59,10 @@ jwt:
   secret: mySecretKey
   expirationMs: 86400000 # 24 hours in milliseconds
 
+# Firebase Configuration
+firebase:
+    config-file: classpath:firebase-service-account.json
+    
 # RSA Keys Configuration
 # rsa:
 #   public-key: classpath:certs/public-key.pem
@@ -85,7 +89,7 @@ file:
 
 # Telegram Configuration
 telegram-setting:
-  enable: true  # false - Disable telegram bot for local development
+  enable: false  # false - Disable telegram bot for local development
   base-url: https://api.telegram.org
   username: planproapp_bot
   access-token: 7845816657:AAEJxT5tVXW88cDYELYli2ttY5glQsJQq7o
