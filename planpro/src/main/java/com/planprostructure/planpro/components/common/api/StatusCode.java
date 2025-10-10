@@ -6,6 +6,7 @@ public enum StatusCode {
 
     // 400 Bad Request
     BAD_REQUEST(40000, "Bad Request", 400),
+    GOOGLE_USERS_CANNOT_UPDATE_EMAIL(40001, "Google users cannot update their email", 400),
     CLIENT_DISABLED(40001, "Client is disabled", 400),
     IMAGE_CANNOT_BE_EMPTY(40002, "Image cannot be empty", 400),
     ISS_DMT_GREATER_THAN_NOW(40003, "IssueDateTime must be greater than now", 400),
@@ -58,40 +59,38 @@ public enum StatusCode {
     WABOOKS_SEND_INVOICE_FAILED(40048, "Send invoice failed.", 400),
     TRIAL_VERSION(40049, "Trial version", 400),
     CUSTOMER_ID_EXIST(40050, "This Customer ID is already exist", 400),
-    DATA_IS_DUPLICATE(40051, "Data Cannot Duplicate" , 400),
+    DATA_IS_DUPLICATE(40051, "Data Cannot Duplicate", 400),
     VERIFY_OTP_CODE_REQUIRED(40024, "Verify otp code is required", 400),
-    BILL_NO_EXIST(40051, "Bill no already exist [{0}] " , 400),
-    CLIENT_ID_ALREAD_EXIST(40053,"Client ID already exist",400),
-    ACCOUNT_LOCKED(40054,"Account Locked",400),
-    BAD_CREDENTIAL(40055,"Incorrect Password",400),
-    USER_ID_OR_USER_NAME_IS_DUPLICATE(40054,"User ID Or User Name is Duplicate" ,400),
-    PRICE_PLAN_NOT_FOUND(40054,"Price plan not found",400),
-    TAX_RAT_CANNOT_BE_NULL(40055,"Tax rate cannot be null",400),
-    CODE_PRICE_PLAN_NOT_FOUND(40056,"Code price plan not found",400),
-    PAYMENT_TERM_NOT_FOUND(40057,"Payment term must be 999 days or less",400),
+    BILL_NO_EXIST(40051, "Bill no already exist [{0}] ", 400),
+    CLIENT_ID_ALREAD_EXIST(40053, "Client ID already exist", 400),
+    ACCOUNT_LOCKED(40054, "Account Locked", 400),
+    BAD_CREDENTIAL(40055, "Incorrect Password", 400),
+    USER_ID_OR_USER_NAME_IS_DUPLICATE(40054, "User ID Or User Name is Duplicate", 400),
+    PRICE_PLAN_NOT_FOUND(40054, "Price plan not found", 400),
+    TAX_RAT_CANNOT_BE_NULL(40055, "Tax rate cannot be null", 400),
+    CODE_PRICE_PLAN_NOT_FOUND(40056, "Code price plan not found", 400),
+    PAYMENT_TERM_NOT_FOUND(40057, "Payment term must be 999 days or less", 400),
     TEMPLATE_NOT_FOUND(40058, "Template Not Found", 400),
     PAYER__CANNOT_BE_DELETE_DUE_TO_PROCESSING_BILLS(40059, "Payer cannot be deleted due to processing bills", 400),
 
-
-    LIMIT_LOGIN(40057,"Limit login",400),
+    LIMIT_LOGIN(40057, "Limit login", 400),
 
     X_DEVICE_ID_HEADER_REQUIRED(40050, "Device ID header is missing", 400),
-    INVALID_TOKEN(40051,"Invalid token",400),
-    TOTAL_DISCOUNT_AMOUNT_MISMATCH(40052,"Total discount amount mismatch",400),
-    TOTAL_TAX_AMOUNT_MISMATCH(40053,"Total tax amount mismatch",400),
-    TOTAL_AMOUNT_MISMATCH(40054,"Total amount mismatch",400),
-    CUSTOMER_EXIST(40058,"Customer already exist",400),
+    INVALID_TOKEN(40051, "Invalid token", 400),
+    TOTAL_DISCOUNT_AMOUNT_MISMATCH(40052, "Total discount amount mismatch", 400),
+    TOTAL_TAX_AMOUNT_MISMATCH(40053, "Total tax amount mismatch", 400),
+    TOTAL_AMOUNT_MISMATCH(40054, "Total amount mismatch", 400),
+    CUSTOMER_EXIST(40058, "Customer already exist", 400),
     DUPLICATE_MONTH_YEAR(40058, "Month and year cannot duplicate", 400),
     FLOOR_ROOM_TENANT_PHONE_EXIST(40059, "Floor-Room-Tenant-Period is duplicated", 400),
-    BILL_CREATED_FAILED(40061,"Bill created failed",400),
-    REGION_CODE_CANNOT_BE_NULL(40058,"Region Code cannot be null", 400),
+    BILL_CREATED_FAILED(40061, "Bill created failed", 400),
+    REGION_CODE_CANNOT_BE_NULL(40058, "Region Code cannot be null", 400),
 
     // 401 Unauthorized
     UNAUTHORIZED(40100, "Unauthorized", 401),
     BILL_REQUEST(40101, "Please wait PPCB approve your requested.", 401),
-    TRANSACTION_ALREADY_MATCH(40918, "Transaction already matched", 409 ),
+    TRANSACTION_ALREADY_MATCH(40918, "Transaction already matched", 409),
     FOLDER_ALREADY_EXIST(40190, "Folder already exists", 400),
-
 
     // 402 Payment Required
     BILL_REVIEW(40200, "Please wait PPCB approve your requested.", 402),
@@ -151,32 +150,32 @@ public enum StatusCode {
     ROLE_NOT_FOUND(40441, "Role not found", 404),
     NOTIFY_METHOD_NOT_FOUND(40442, "Notify method not found.", 404),
     NO_BILL_ISSUED(40451, "No bill was issued.", 404),
-    BANK_NOT_FOUND_BY_NAME(40443, "Bank not found [{0}]",404),
-    CLIENT_ID_NOT_FOUND(40444, "Client id not found",404),
-    ZALO_TEMPLATE_NOT_FOUND(40445, "Zalo template not found",404),
-    BANK_NOT_ALLOW_SCRAP(40446, "The bank does not permit automated data scraping",404),
-    TAX_CODE_NOT_FOUND(40046,"Tax code not found",404),
+    BANK_NOT_FOUND_BY_NAME(40443, "Bank not found [{0}]", 404),
+    CLIENT_ID_NOT_FOUND(40444, "Client id not found", 404),
+    ZALO_TEMPLATE_NOT_FOUND(40445, "Zalo template not found", 404),
+    BANK_NOT_ALLOW_SCRAP(40446, "The bank does not permit automated data scraping", 404),
+    TAX_CODE_NOT_FOUND(40046, "Tax code not found", 404),
     FULL_NAME_IS_NULL(40444, "Full name is null", 404),
     GROUP_ID_IS_NULL(40445, "Group ID is null", 404),
-    GROUP_NAME_IS_NULL(40446 , "Group Name is null", 404),
-    PERSON_IN_CHARGE_NAME_IS_NULL(40447 , "Person In Charge Name is null", 404),
-    PERSON_IN_CHARGE_REGION_CODE_IS_NULL(40448 , "Person In Charge Region Code is null", 404),
-    ACCOUNT_NAME_IS_NULL(40449 , "Account Name is null", 404),
+    GROUP_NAME_IS_NULL(40446, "Group Name is null", 404),
+    PERSON_IN_CHARGE_NAME_IS_NULL(40447, "Person In Charge Name is null", 404),
+    PERSON_IN_CHARGE_REGION_CODE_IS_NULL(40448, "Person In Charge Region Code is null", 404),
+    ACCOUNT_NAME_IS_NULL(40449, "Account Name is null", 404),
     NOTIFY_VALUE_NOT_FOUND(400450, "Notify value not found", 404),
     INVALID_PHONE_NUMBER_VIETNAM(400451, "Phone number must be a 10 or 11 digits starting with 0", 404),
     INVALID_PHONE_NUMBER_FOR(400451, "Phone number must be a 10 or 11 digits starting with 0 for {0} value", 404),
-    INVALID_EMAIL_FORMAT(400451,"Invalid email", 404),
+    INVALID_EMAIL_FORMAT(400451, "Invalid email", 404),
     NOTIFY_TYPE_NOT_FOUND(400452, "Notification Type is not found", 404),
     DUPLICATE_NOTIFY_TYPE(400453, "Duplication Notification Type", 400),
 
-    FAQ_NOT_FOUND(40047,"FAQ content not found",404),
-    NEWS_NOT_FOUND(40048,"News not found",404),
-    CUSTOMER_NOT_FOUND(40059,"Customer not found",404),
-    FOLDER_NOT_FOUND(40056,"Folder not found.",404),
+    FAQ_NOT_FOUND(40047, "FAQ content not found", 404),
+    NEWS_NOT_FOUND(40048, "News not found", 404),
+    CUSTOMER_NOT_FOUND(40059, "Customer not found", 404),
+    FOLDER_NOT_FOUND(40056, "Folder not found.", 404),
     PRICING_ID_NOT_FOUND(404046, "Pricing id not found", 404),
     SMS_NOT_FOUND(404047, "Sms not found", 404),
-    ELECTRICITY_LESS_THAN_PREVIOUS(40447,"Electricity must be greater than previous",404),
-    MISSING_CUSTOMER_INFO(40448,"Missing Tenant name or phone",404),
+    ELECTRICITY_LESS_THAN_PREVIOUS(40447, "Electricity must be greater than previous", 404),
+    MISSING_CUSTOMER_INFO(40448, "Missing Tenant name or phone", 404),
     // 409 Conflict
     BILLER_EXIST(40900, "Biller already exist", 409),
     BILLER_ALREADY_SUBSCRIBE(40901, "Biller already subscribe", 409),
@@ -221,12 +220,8 @@ public enum StatusCode {
     // 503 Service Unavailable
     SEND_OTP_FAILED(50300, "sent otp failed", 503),
 
-
     // 500 Internal Server Error
     AUTHENTICATION_FAILED(50000, "Authentication failed", 500);
-
-
-
 
     private final String message;
     private final int code;

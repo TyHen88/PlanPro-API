@@ -1,9 +1,12 @@
 package com.planprostructure.planpro.service.users;
 
+import com.planprostructure.planpro.components.common.api.StatusCode;
 //import com.planprostructure.planpro.domain.proTalk.UserChat;
 //import com.planprostructure.planpro.domain.proTalk.UserChatRepository;
 import com.planprostructure.planpro.domain.users.UserRepository;
 import com.planprostructure.planpro.domain.users.Users;
+import com.planprostructure.planpro.enums.AuthProvider;
+import com.planprostructure.planpro.exception.BusinessException;
 import com.planprostructure.planpro.helper.AuthHelper;
 import com.planprostructure.planpro.payload.users.UpdateProfileRequest;
 import com.planprostructure.planpro.payload.users.UserProfileResponse;
@@ -51,6 +54,7 @@ public class UserServiceImpl implements UserService {
                 .phoneNumber(user.getPhoneNumber())
                 .gender(user.getGender())
                 .profileImageUrl(user.getProfileImageUrl())
+                .authProvider(user.getAuthProvider().name())
                 .build();
     }
 
@@ -64,6 +68,10 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with ID: " + userId));
         if (user == null) {
             throw new UsernameNotFoundException("User not found with ID: " + userId);
+        }
+        if (user.getAuthProvider() == AuthProvider.GOOGLE) {
+            throw new BusinessException(StatusCode.GOOGLE_USERS_CANNOT_UPDATE_EMAIL,
+                    "Google users cannot update their email");
         }
         // Execute the update query
         // userRepository.updateProfile(
