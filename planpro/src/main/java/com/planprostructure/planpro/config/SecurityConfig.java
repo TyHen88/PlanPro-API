@@ -7,9 +7,9 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import com.planprostructure.planpro.properties.RsaKeyProperties;
+import com.planprostructure.planpro.service.auth.CustomOAuth2UserService;
 import com.planprostructure.planpro.service.auth.UserAuthServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,6 +39,9 @@ public class SecurityConfig {
         private final AccessDeniedHandler accessDeniedHandler;
         private final CustomJwtAuthenticationConverter customJwtAuthenticationConverter;
         private final PasswordEncoder passwordEncoder;
+        private final CustomOAuth2UserService customOAuth2UserService;
+        private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+        private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
 
         @Primary
         @Bean("userAuthProvider")
@@ -50,18 +53,6 @@ public class SecurityConfig {
                 return new ProviderManager(authProvider);
         }
 
-        /**
-         * 1 - Disable Cross-Site Request Forgery (CSRF)
-         * 2 - The user should be authenticated for any request in the application.
-         * 3 - Spring Security will never create an HttpSession and it will never use it
-         * to obtain the Security Context.
-         * 4 - Spring Security's HTTP Basic Authentication support is enabled by
-         * default. However, as soon as any servlet-based configuration is provided,
-         * HTTP Basic must be explicitly provided.
-         * WARNING
-         * Never disable CSRF protection while leaving session management enabled! Doing
-         * so will open you up to a Cross-Site Request Forgery attack.
-         */
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 return http
@@ -77,6 +68,8 @@ public class SecurityConfig {
                                                                 "/api/wb/v1/password/**",
                                                                 "/api/v1/auth/**",
                                                                 "/api/v1/image/**",
+                                                                "/oauth2/**",
+                                                                "/login/oauth2/**",
                                                                 "/swagger-ui/**",
                                                                 "/v3/api-docs/**",
                                                                 "/v3/api-docs.yaml",
@@ -89,9 +82,8 @@ public class SecurityConfig {
                                                                 "/swagger.json",
                                                                 "/swagger-ui/**",
                                                                 "/swagger-ui/index.html",
-                                                                "/actuator/**"
-
-                                                ).permitAll()
+                                                                "/actuator/**")
+                                                .permitAll()
                                                 .requestMatchers(
                                                                 "/api/wb/v1/users/**",
                                                                 "/api/wb/v1/trips/**",
@@ -104,10 +96,8 @@ public class SecurityConfig {
                                                                 "/api/v1/conversations/**",
                                                                 "/api/v1/message/**",
                                                                 "/api/v1/contacts/**",
-                                                                "/api/wb/v1/reminders/**"
-
-                                                ).authenticated()
-
+                                                                "/api/wb/v1/reminders/**")
+                                                .authenticated()
                                                 .requestMatchers("/ws/**").permitAll()
                                                 .anyRequest().authenticated())
                                 .exceptionHandling(exceptionHandling -> exceptionHandling
@@ -115,6 +105,12 @@ public class SecurityConfig {
                                                 .authenticationEntryPoint(unauthorizedHandler))
                                 .sessionManagement(session -> session
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                                // Add OAuth2 Login
+                                .oauth2Login(oauth2 -> oauth2
+                                                .userInfoEndpoint(userInfo -> userInfo
+                                                                .userService(customOAuth2UserService))
+                                                .successHandler(oAuth2AuthenticationSuccessHandler)
+                                                .failureHandler(oAuth2AuthenticationFailureHandler))
                                 .oauth2ResourceServer(oauth2 -> oauth2
                                                 .authenticationEntryPoint(unauthorizedHandler)
                                                 .accessDeniedHandler(accessDeniedHandler)
@@ -139,4 +135,5 @@ public class SecurityConfig {
                 JWKSource<SecurityContext> jwkSource = new ImmutableJWKSet<>(new JWKSet(jwk));
                 return new NimbusJwtEncoder(jwkSource);
         }
+
 }

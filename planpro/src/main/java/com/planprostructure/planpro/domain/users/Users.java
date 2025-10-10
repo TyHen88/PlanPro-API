@@ -1,6 +1,7 @@
 package com.planprostructure.planpro.domain.users;
 
 import com.planprostructure.planpro.domain.UpdatableEntity;
+import com.planprostructure.planpro.enums.AuthProvider;
 import com.planprostructure.planpro.enums.Role;
 import com.planprostructure.planpro.enums.StatusUser;
 import jakarta.persistence.*;
@@ -54,11 +55,10 @@ public class Users extends UpdatableEntity {
     @Column(name = "phone")
     private String phoneNumber;
 
-    @Column(name = "sts",nullable = false, length = Types.CHAR)
+    @Column(name = "sts", nullable = false, length = Types.CHAR)
     @JdbcTypeCode(Types.CHAR)
     @Convert(converter = StatusUser.Converter.class)
     private StatusUser status;
-
 
     @Column(name = "gender")
     private String gender;
@@ -66,6 +66,8 @@ public class Users extends UpdatableEntity {
     @Column(name = "profile_image_url")
     private String profileImageUrl;
 
-
+    @Column(name = "auth_provider")
+    @Enumerated(EnumType.STRING)
+    private AuthProvider authProvider;
 
 }

@@ -8,7 +8,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import lombok.Builder;
 
+@Builder
 public record SecurityUser(Users users) implements UserDetails {
 
     @Override

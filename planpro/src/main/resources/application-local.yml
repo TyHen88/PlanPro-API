@@ -2,6 +2,19 @@ server:
   port: 8080
 
 spring:
+  security:
+      oauth2:
+        client:
+          registration:
+            google:
+              client-id: 1065879052327-njgaidr15era3c3a3siptr01ldg4142f.apps.googleusercontent.com
+              client-secret: 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
+              scope:
+                - email
+                - profile
+              redirect-uri: http://localhost:8080/login/oauth2/code/google
+              authorization-grant-type: authorization_code
+              client-name: Google
   ai:
     gemini:
       api-key: AIzaSyBSIVn_HrlfJ-HnD1oQ9qhVhcnXT92OPQI
@@ -96,18 +109,23 @@ telegram-setting:
   bot-url: https://t.me/planproapp_bot
   share-url: https://t.me/planproapp_bot
 
+# OAuth2 Configuration
+app:
+  oauth2:
+    authorized-redirect-uri: http://localhost:3000/oauth2/redirect
+
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
     url: /v3/api-docs
-    disable-swagger-default-url: true
-    operations-sorter: method
-    tags-sorter: alpha
-    display-request-duration: true
-    filter: true
-    try-it-out-enabled: true
-    doc-expansion: none
-    default-models-expand-depth: 1
+    # disable-swagger-default-url: true
+    # operations-sorter: method
+    # tags-sorter: alpha
+    # display-request-duration: true
+    # filter: true
+    # try-it-out-enabled: true
+    # doc-expansion: none
+    # default-models-expand-depth: 1
   api-docs:
     path: /v3/api-docs
     enabled: true

@@ -8,6 +8,7 @@ import com.planprostructure.planpro.domain.token.UserSession;
 import com.planprostructure.planpro.domain.token.UserSessionRepository;
 import com.planprostructure.planpro.domain.users.UserRepository;
 import com.planprostructure.planpro.domain.users.Users;
+import com.planprostructure.planpro.enums.AuthProvider;
 import com.planprostructure.planpro.enums.Role;
 import com.planprostructure.planpro.enums.StatusUser;
 import com.planprostructure.planpro.exception.BusinessException;
@@ -19,6 +20,7 @@ import com.planprostructure.planpro.service.password.PasswordEncryption;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +33,6 @@ import java.util.Optional;
 public class AuthServiceImp implements AuthService {
     private final UserRepository userRepository;
     private final UserSessionRepository userSessionRepository;
-    // private final BCryptPasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final UserAuthenticationProvider userAuthenticationProvider;
     private final PasswordEncryption passwordEncryption;
@@ -56,8 +57,9 @@ public class AuthServiceImp implements AuthService {
                 .phoneNumber(request.getPhoneNumber())
                 .role(Role.USER)
                 .status(StatusUser.ACTIVE)
+                .authProvider(AuthProvider.LOCAL)
                 .build();
-        Users savedUser = userRepository.save(users);
+        userRepository.save(users);
 
     }
 
@@ -122,9 +124,6 @@ public class AuthServiceImp implements AuthService {
         userSessionRepository.save(userSession);
         log.info("Password reset token generated for user: {}", email);
 
-        // TODO: Send email with reset token
-        // For now, we'll just log the token (in production, this should be sent via
-        // email)
         log.info("Reset token for {}: {}", email, resetToken);
     }
 

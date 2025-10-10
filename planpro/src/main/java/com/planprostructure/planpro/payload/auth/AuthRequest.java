@@ -1,6 +1,7 @@
 package com.planprostructure.planpro.payload.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -38,4 +39,8 @@ public class AuthRequest {
     @JsonProperty("password")
     @Schema(description = "Password for the account", example = "securePassword123", required = true)
     private String password;
+
+    @JsonProperty("auth_provider")
+    @Schema(description = "Authentication provider", example = "LOCAL", required = true)
+    private String authProvider;
 }

@@ -1,6 +1,19 @@
 spring:
   application:
     name: planpro-api
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - email
+              - profile
+            redirect-uri: ${GOOGLE_REDIRECT_URI:https://yourdomain.com/login/oauth2/code/google}
+            authorization-grant-type: authorization_code
+            client-name: Google
   datasource:
     url: jdbc:postgresql://${PGHOST}:${PGPORT}/${PGDATABASE}
     driver-class-name: org.postgresql.Driver
@@ -98,3 +111,8 @@ telegram-setting:
   access-token: 7845816657:AAEJxT5tVXW88cDYELYli2ttY5glQsJQq7o
   bot-url: https://t.me/planproapp_bot
   share-url: https://t.me/planproapp_bot
+
+# OAuth2 Configuration
+app:
+  oauth2:
+    authorized-redirect-uri: ${OAUTH2_REDIRECT_URI:https://yourdomain.com/oauth2/redirect}
