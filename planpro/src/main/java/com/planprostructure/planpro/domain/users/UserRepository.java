@@ -42,4 +42,8 @@ public interface UserRepository extends JpaRepository<Users, Long> {
                         where id != ?1
                         """, nativeQuery = true)
         List<GetIUserContacts> findAllUsersContacts(Long userId);
+
+        // find by email or username
+        @Query("SELECT u FROM Users u WHERE u.email = ?1 OR u.username = ?2")
+        Optional<Users> findByEmailOrUsername(String email, String username);
 }

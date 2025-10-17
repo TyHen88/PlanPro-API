@@ -70,4 +70,19 @@ public class Users extends UpdatableEntity {
     @Enumerated(EnumType.STRING)
     private AuthProvider authProvider;
 
+    @Column(name = "device_type")
+    private String deviceType;
+
+    @Column(name = "browser_name")
+    private String browserName;
+
+    @Column(name = "country")
+    private String country;
+
+    @Column(name = "city")
+    private String city;
+
+    @Column(name = "ip_address")
+    private String ipAddress;
+
 }

@@ -1,5 +1,6 @@
 package com.planprostructure.planpro.service.auth;
 
+import com.planprostructure.planpro.helper.AuthHelper;
 import com.planprostructure.planpro.components.common.api.StatusCode;
 import com.planprostructure.planpro.config.JwtUtil;
 import com.planprostructure.planpro.config.UserAuthenticationProvider;
@@ -16,6 +17,8 @@ import com.planprostructure.planpro.payload.auth.AuthRequest;
 import com.planprostructure.planpro.payload.auth.AuthResponse;
 import com.planprostructure.planpro.payload.auth.LoginRequest;
 import com.planprostructure.planpro.payload.auth.ResetPasswordRequest;
+import com.planprostructure.planpro.payload.auth.SetUpPasswordRequest;
+import com.planprostructure.planpro.payload.auth.UpdatePasswordRequest;
 import com.planprostructure.planpro.service.password.PasswordEncryption;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -125,6 +128,64 @@ public class AuthServiceImp implements AuthService {
         log.info("Password reset token generated for user: {}", email);
 
         log.info("Reset token for {}: {}", email, resetToken);
+    }
+
+    @Transactional
+    public void setUpPassword(SetUpPasswordRequest request) throws Throwable {
+        // Find and validate the reset token in UserSession
+        Long userId = AuthHelper.getUserId();
+        Optional<Users> userOptional = userRepository.findById(userId);
+        if (userOptional.isEmpty()) {
+            throw new BusinessException(StatusCode.USER_NOT_FOUND, "User not found");
+        }
+        Users user = userOptional.get();
+        if (user.getPassword() != null) {
+            throw new BusinessException(StatusCode.BAD_REQUEST, "Password already setup");
+        }
+        String encryptedPassword;
+        try {
+            encryptedPassword = passwordEncryption.getPassword(request.getNewPassword());
+            if (!request.getConfirmPassword().equals(request.getNewPassword())) {
+                throw new BusinessException(StatusCode.PASSWORD_DOES_NOT_MATCH,
+                        "Password and confirm password do not match");
+            }
+        } catch (Exception e) {
+            throw new BusinessException(StatusCode.PASSWORD_MUST_BE_ENCRYPTED);
+        }
+        user.setPassword(encryptedPassword);
+        userRepository.save(user);
+        log.info("Password setup successfully for user: {}", user.getEmail());
+    }
+
+    @Transactional
+    public void updatePassword(UpdatePasswordRequest request) throws Throwable {
+        // Find and validate the reset token in UserSession
+        Long userId = AuthHelper.getUserId();
+        Optional<Users> userOptional = userRepository.findById(userId);
+        if (userOptional.isEmpty()) {
+            throw new BusinessException(StatusCode.USER_NOT_FOUND, "User not found");
+        }
+        Users user = userOptional.get();
+        if (!passwordEncryption.verifyPassword(request.getOldPassword(), user.getPassword())) {
+            System.out.println("request.getOldPassword(): " + request.getOldPassword());
+            System.out.println("user.getPassword(): " + user.getPassword());
+            System.out.println("passwordEncryption.verifyPassword(request.getOldPassword(), user.getPassword()): "
+                    + passwordEncryption.verifyPassword(request.getOldPassword(), user.getPassword()));
+            throw new BusinessException(StatusCode.CURRENT_PASSWORD, "Current password is incorrect");
+        }
+        String encryptedPassword;
+        try {
+            encryptedPassword = passwordEncryption.getPassword(request.getNewPassword());
+            if (!request.getConfirmPassword().equals(request.getNewPassword())) {
+                throw new BusinessException(StatusCode.PASSWORD_DOES_NOT_MATCH,
+                        "New password and confirm password do not match");
+            }
+        } catch (Exception e) {
+            throw new BusinessException(StatusCode.PASSWORD_MUST_BE_ENCRYPTED);
+        }
+        user.setPassword(encryptedPassword);
+        userRepository.save(user);
+        log.info("Password updated successfully for user: {}", user.getEmail());
     }
 
     @Transactional

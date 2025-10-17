@@ -20,4 +20,14 @@ public abstract class OAuth2UserInfo {
     public abstract String getEmail();
 
     public abstract String getImageUrl();
+
+    public abstract String getDeviceType();
+
+    public abstract String getBrowserName();
+
+    public abstract String getCountry();
+
+    public abstract String getCity();
+
+    public abstract String getIpAddress();
 }

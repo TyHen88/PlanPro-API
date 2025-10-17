@@ -7,7 +7,6 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import com.planprostructure.planpro.properties.RsaKeyProperties;
-import com.planprostructure.planpro.service.auth.CustomOAuth2UserService;
 import com.planprostructure.planpro.service.auth.UserAuthServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -39,9 +38,6 @@ public class SecurityConfig {
         private final AccessDeniedHandler accessDeniedHandler;
         private final CustomJwtAuthenticationConverter customJwtAuthenticationConverter;
         private final PasswordEncoder passwordEncoder;
-        private final CustomOAuth2UserService customOAuth2UserService;
-        private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
-        private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
 
         @Primary
         @Bean("userAuthProvider")
@@ -85,6 +81,8 @@ public class SecurityConfig {
                                                                 "/actuator/**")
                                                 .permitAll()
                                                 .requestMatchers(
+                                                                "/api/wb/v1/auth/setup-password",
+                                                                "/api/wb/v1/auth/update-password",
                                                                 "/api/wb/v1/users/**",
                                                                 "/api/wb/v1/trips/**",
                                                                 "/api/wb/v1/files/upload-image",
@@ -105,12 +103,6 @@ public class SecurityConfig {
                                                 .authenticationEntryPoint(unauthorizedHandler))
                                 .sessionManagement(session -> session
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                                // Add OAuth2 Login
-                                .oauth2Login(oauth2 -> oauth2
-                                                .userInfoEndpoint(userInfo -> userInfo
-                                                                .userService(customOAuth2UserService))
-                                                .successHandler(oAuth2AuthenticationSuccessHandler)
-                                                .failureHandler(oAuth2AuthenticationFailureHandler))
                                 .oauth2ResourceServer(oauth2 -> oauth2
                                                 .authenticationEntryPoint(unauthorizedHandler)
                                                 .accessDeniedHandler(accessDeniedHandler)
@@ -135,5 +127,4 @@ public class SecurityConfig {
                 JWKSource<SecurityContext> jwkSource = new ImmutableJWKSet<>(new JWKSet(jwk));
                 return new NimbusJwtEncoder(jwkSource);
         }
-
 }

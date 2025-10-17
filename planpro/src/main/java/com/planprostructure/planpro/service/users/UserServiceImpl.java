@@ -40,7 +40,8 @@ public class UserServiceImpl implements UserService {
         // 2️⃣ Load the user from the DB
         Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with ID: " + userId));
-
+        Boolean isPass = user.getPassword() != null ? true : false;
+        System.out.println("isPass: " + isPass);
         // 3️⃣ Map entity → DTO
         return UserProfileResponse.builder()
                 .id(user.getId())
@@ -55,6 +56,7 @@ public class UserServiceImpl implements UserService {
                 .gender(user.getGender())
                 .profileImageUrl(user.getProfileImageUrl())
                 .authProvider(user.getAuthProvider().name())
+                .isPass(isPass)
                 .build();
     }
 

@@ -5,6 +5,8 @@ import com.planprostructure.planpro.components.common.api.ProPlanRestController;
 import com.planprostructure.planpro.payload.auth.AuthRequest;
 import com.planprostructure.planpro.payload.auth.LoginRequest;
 import com.planprostructure.planpro.payload.auth.ResetPasswordRequest;
+import com.planprostructure.planpro.payload.auth.SetUpPasswordRequest;
+import com.planprostructure.planpro.payload.auth.UpdatePasswordRequest;
 import com.planprostructure.planpro.service.auth.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -106,4 +108,29 @@ public class AuthController extends ProPlanRestController {
         return ok(authService.getUserSession(email));
     }
 
+    @PutMapping("/setup-password")
+    @Operation(summary = "Setup Password", description = "Setup password for google login")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Password setup successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid password"),
+            @ApiResponse(responseCode = "401", description = "Password setup failed")
+    })
+    public ResponseEntity setupPassword(@RequestHeader Map<String, String> headers,
+            @RequestBody @Valid SetUpPasswordRequest payload) throws Throwable {
+        authService.setUpPassword(payload);
+        return ok(new Common(headers));
+    }
+
+    @PutMapping("/update-password")
+    @Operation(summary = "Update Password", description = "Update password for google login and local login")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Password updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid password"),
+            @ApiResponse(responseCode = "401", description = "Password update failed")
+    })
+    public ResponseEntity updatePassword(@RequestHeader Map<String, String> headers,
+            @RequestBody @Valid UpdatePasswordRequest payload) throws Throwable {
+        authService.updatePassword(payload);
+        return ok(new Common(headers));
+    }
 }

@@ -79,7 +79,8 @@ public class JwtUtil {
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", Objects.requireNonNull(securityUser.getUserId(), "User ID cannot be null"));
         claims.put("username", Objects.requireNonNull(securityUser.getUsername(), "Username cannot be null"));
-        // claims.put("role", Objects.requireNonNull(securityUser.getAuthorities(), "Authorities cannot be null"));
+        // claims.put("role", Objects.requireNonNull(securityUser.getAuthorities(),
+        // "Authorities cannot be null"));
 
         JwtClaimsSet jwtClaimsSet = JwtClaimsSet.builder()
                 .subject(securityUser.getUsername())

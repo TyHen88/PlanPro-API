@@ -32,6 +32,10 @@ public record SecurityUser(Users users) implements UserDetails {
         return this.users.getId();
     }
 
+    public String getEmail() {
+        return this.users.getEmail();
+    }
+
     public String getRole() {
         return this.users.getRole().name();
     }
