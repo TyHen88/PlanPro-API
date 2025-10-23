@@ -25,7 +25,7 @@ public class DateTimeUtils {
     public static final DateTimeFormatter VA_FORMATTER_TIME6 = DateTimeFormatter.ofPattern(VA_PATTERN_TIME6);
     public static final DateTimeFormatter VA_FORMATTER_DATE8 = DateTimeFormatter.ofPattern(VA_PATTERN_DATE8);
     public static final DateTimeFormatter VA_FORMATTER_DTM14 = DateTimeFormatter.ofPattern(VA_PATTERN_DTM14);
-    public static final DateTimeFormatter VA_FORMATTER_MONTH6= DateTimeFormatter.ofPattern(VA_PATTERN_MONTH6);
+    public static final DateTimeFormatter VA_FORMATTER_MONTH6 = DateTimeFormatter.ofPattern(VA_PATTERN_MONTH6);
     public static final DateTimeFormatter VA_FORMATTER_YYYYMM = DateTimeFormatter.ofPattern(VA_PATTERN_YYYYMM);
 
     public static final DateTimeFormatter VA_FORMATTER_DTM_MINUTE = DateTimeFormatter.ofPattern(VA_PATTERN_DTM_MINUTE);
@@ -37,29 +37,29 @@ public class DateTimeUtils {
         return LocalDateTime.now(clock);
     }
 
-    public static String getDateNow(){
+    public static String getDateNow() {
         return ictNow().format(VA_FORMATTER_DATE8);
     }
 
-    public static String getTimeNow(){
+    public static String getTimeNow() {
         return ictNow().format(VA_FORMATTER_TIME6);
     }
 
-    public static String getEndOfTime(){
+    public static String getEndOfTime() {
         return LocalTime.MAX.format(DateTimeFormatter.ofPattern(VA_PATTERN_TIME6));
     }
 
-    public static String getDateTimeNow(){
+    public static String getDateTimeNow() {
         return ictNow().format(VA_FORMATTER_DTM14);
     }
 
-    public static LocalDateTime atEndOfDay(){
+    public static LocalDateTime atEndOfDay() {
         return ictNow().toLocalDate().atTime(LocalTime.MAX);
     }
 
     public static LocalDateTime prevNow() {
         var localDateTime = ictNow();
-        return localDateTime.minusDays ( 1 );
+        return localDateTime.minusDays(1);
     }
 
     public static String calculateDueDate(String issueDateStr, String paymentTermDays) {
@@ -75,7 +75,8 @@ public class DateTimeUtils {
         // Format due date to string
         return dueDate.format(VA_FORMATTER_DTM14);
     }
-    //00:02 to 0000
+
+    // 00:02 to 0000
     public static String formatTimeToHHmmss(String time) {
         if (time == null || time.isEmpty()) {
             return "000000"; // Default to midnight if input is null or empty
@@ -99,11 +100,11 @@ public class DateTimeUtils {
     }
 
     public static LocalDateTime formatDateTimeMinute(@NonNull String dateTime) {
-        return LocalDateTime.parse(dateTime , VA_FORMATTER_DTM_MINUTE);
+        return LocalDateTime.parse(dateTime, VA_FORMATTER_DTM_MINUTE);
     }
 
     public static LocalDate parseDate(String date) {
-        if(date == null || date.length() != 8) {
+        if (date == null || date.length() != 8) {
             return null;
         }
         return LocalDate.parse(date, VA_FORMATTER_DATE8);
@@ -114,31 +115,46 @@ public class DateTimeUtils {
         return day == DayOfWeek.SUNDAY || day == DayOfWeek.SATURDAY;
     }
 
-    //get time yyyyMMddHHmmss to hh:mm
+    // get time yyyyMMddHHmmss to hh:mm
     public static String getTime(String dateTime) {
-        return dateTime.substring(8, 14);
+        if (dateTime == null || dateTime.isEmpty() || dateTime.equals("undefined") || dateTime.length() < 14) {
+            return "000000"; // Return default time if input is invalid
+        }
+        try {
+            return dateTime.substring(8, 14);
+        } catch (StringIndexOutOfBoundsException e) {
+            return "000000"; // Return default time if substring fails
+        }
     }
 
     public static void main(String[] args) {
         System.err.println(parseDateTime("20230227125500").isAfter(LocalDateTime.now()));
-        System.err.println(DateTimeUtils.ictNow().format(VA_FORMATTER_YYYYMM).equals(parseDateTime("20220627125500").format(VA_FORMATTER_YYYYMM)));
-        //ex: getTime("20230227125500") will return 12:55
+        System.err.println(DateTimeUtils.ictNow().format(VA_FORMATTER_YYYYMM)
+                .equals(parseDateTime("20220627125500").format(VA_FORMATTER_YYYYMM)));
+        // ex: getTime("20230227125500") will return 12:55
         System.err.println(getTime("20230227125500"));
     }
 
-    public static String stringToDate (String value) {
+    public static String stringToDate(String value) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         return LocalDate.parse(value, formatter).format(DateTimeFormatter.ofPattern("dd/MMMM/yyyy"));
     }
 
-    public static String stringToDateWithFormat (String value) {
+    public static String stringToDateWithFormat(String value) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         return LocalDate.parse(value, formatter).format(DateTimeFormatter.ofPattern("dd, MMMM yyyy"));
     }
 
-    public static String stringToDateYYYY_MM_DD (String value) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-        return LocalDate.parse(value, formatter).format(DateTimeFormatter.ofPattern("YYYY-MM-dd"));
+    public static String stringToDateYYYY_MM_DD(String value) {
+        if (value == null || value.isEmpty() || value.equals("undefined") || value.length() < 14) {
+            return null; // Return null for invalid input
+        }
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+            return LocalDate.parse(value, formatter).format(DateTimeFormatter.ofPattern("YYYY-MM-dd"));
+        } catch (Exception e) {
+            return null; // Return null if parsing fails
+        }
     }
 
     public static String stringToDateYYYY_MM_DD_HH_MM_SS(String value) {
@@ -147,17 +163,17 @@ public class DateTimeUtils {
         return dateTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss a"));
     }
 
-    public static String stringToDateDD_MM_YYYY (String value) {
+    public static String stringToDateDD_MM_YYYY(String value) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         return LocalDate.parse(value, formatter).format(DateTimeFormatter.ofPattern("dd/MM/YYYY"));
     }
 
-    public static String stringToDateYYYYMMDD (String value) {
+    public static String stringToDateYYYYMMDD(String value) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         return LocalDate.parse(value, formatter).format(DateTimeFormatter.ofPattern(VA_PATTERN_DATE8));
     }
 
-    public static String stringToDateMMMM_YYYY (String value) {
+    public static String stringToDateMMMM_YYYY(String value) {
         String fullDate = value + "01";
         DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         LocalDate date = LocalDate.parse(fullDate, inputFormatter);
@@ -213,23 +229,27 @@ public class DateTimeUtils {
         return String.valueOf(days);
     }
 
-    public static String stringToDateDD_MM_YY (String value) {
+    public static String stringToDateDD_MM_YY(String value) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         return LocalDate.parse(value, formatter).format(DateTimeFormatter.ofPattern("dd-MM-YY"));
     }
 
-    public static String stringToDateDD_MMM_YY (String value) {
+    public static String stringToDateDD_MMM_YY(String value) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         return LocalDate.parse(value, formatter).format(DateTimeFormatter.ofPattern("dd-MMM-YY"));
     }
+
     public static String getOrdinalSuffix(int day) {
         if (day >= 11 && day <= 13) {
             return "th";
         }
         switch (day % 10) {
-            case 1:  return "st";
-            case 2:  return "nd";
-            case 3:  return "rd";
+            case 1:
+                return "st";
+            case 2:
+                return "nd";
+            case 3:
+                return "rd";
             default:
                 return "th";
         }
@@ -251,8 +271,7 @@ public class DateTimeUtils {
             throw new DateTimeParseException(
                     "Invalid date format. Please use 'yyyyMMdd' format.",
                     e.getParsedString(),
-                    e.getErrorIndex()
-            );
+                    e.getErrorIndex());
         }
     }
 
@@ -286,11 +305,9 @@ public class DateTimeUtils {
             throw new DateTimeParseException(
                     "Invalid date format. Please use 'yyyyMMdd' format.",
                     e.getParsedString(),
-                    e.getErrorIndex()
-            );
+                    e.getErrorIndex());
         }
     }
-
 
     public static String getEndDateYear_yyyyMMdd(BigDecimal years, String startDateStr) {
         try {
@@ -313,39 +330,43 @@ public class DateTimeUtils {
             throw new DateTimeParseException(
                     "Invalid date format. Please use 'yyyyMMdd' format.",
                     e.getParsedString(),
-                    e.getErrorIndex()
-            );
+                    e.getErrorIndex());
         }
     }
-
-
-
-
-
-
-
-
 
     public static String convertMonthToOrdinal(String month) {
         switch (month) {
-            case "January":   return "1";
-            case "February":  return "2";
-            case "March":     return "3";
-            case "April":     return "4";
-            case "May":       return "5";
-            case "June":      return "6";
-            case "July":      return "7";
-            case "August":    return "8";
-            case "September": return "9";
-            case "October":   return "10";
-            case "November":  return "11";
-            case "December":  return "12";
-            default:          throw new IllegalArgumentException("Invalid month name: " + month);
+            case "January":
+                return "1";
+            case "February":
+                return "2";
+            case "March":
+                return "3";
+            case "April":
+                return "4";
+            case "May":
+                return "5";
+            case "June":
+                return "6";
+            case "July":
+                return "7";
+            case "August":
+                return "8";
+            case "September":
+                return "9";
+            case "October":
+                return "10";
+            case "November":
+                return "11";
+            case "December":
+                return "12";
+            default:
+                throw new IllegalArgumentException("Invalid month name: " + month);
         }
     }
 
-//    String value = "20241228124300";
-//    The output will be: "28 Dec 2024"
+    // String value = "20241228124300";
+    // The output will be: "28 Dec 2024"
     public static String formatDateTimeMonthChar(String value) {
         try {
             LocalDateTime dateTime = LocalDateTime.parse(value,
@@ -365,7 +386,6 @@ public class DateTimeUtils {
             return "";
         }
     }
-
 
     public static String getDayFromDate(String value) {
         if (value == null || value.isEmpty()) {
@@ -405,6 +425,5 @@ public class DateTimeUtils {
             return "";
         }
     }
-
 
 }

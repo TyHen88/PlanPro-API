@@ -17,10 +17,11 @@ spring:
               client-name: Google
   ai:
     gemini:
-      api-key: AIzaSyBSIVn_HrlfJ-HnD1oQ9qhVhcnXT92OPQI
+      api-key: AIzaSyCiH0GVvBpGgFqjEGsMLp4sRflgHJwLSHk
       base-url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent
       model: gemini-2.0-flash
       temperature: 0.5
+
   main:
     allow-bean-definition-overriding: true
   datasource:

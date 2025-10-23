@@ -25,7 +25,7 @@ public class Calendar extends UpdatableEntity {
     @Column(name = "cal_id")
     private Long id;
 
-    @Column(name = "event_title" , nullable = false)
+    @Column(name = "event_title", nullable = false)
     private String title;
 
     @Column(name = "start_date", length = 14, nullable = false)
@@ -37,7 +37,8 @@ public class Calendar extends UpdatableEntity {
     @Column(name = "start_time", length = 6, nullable = false)
     private String startTime;
 
-    @Column(name = "end_time", length = 6, nullable = false)
+    @Column(name = "end_time", length = 6)
+    @ColumnDefault("000000")
     private String endTime;
 
     @Column(name = "description")
@@ -53,7 +54,7 @@ public class Calendar extends UpdatableEntity {
     private Long userId;
 
     @Column(name = "note_id")
-    private Long noteId; //optional
+    private Long noteId; // optional
 
     @Column(name = "cal_type")
     @JdbcTypeCode(Types.VARCHAR)
@@ -74,7 +75,9 @@ public class Calendar extends UpdatableEntity {
     private boolean isNotify = false;
 
     @Builder
-    public Calendar(Long id, String title, String startDate, String endDate, String startTime, String endTime, String description, String location, Long tripId, Long userId, Long noteId, CalendarEnum calendarType, Status status, String attendees, boolean isNotify) {
+    public Calendar(Long id, String title, String startDate, String endDate, String startTime, String endTime,
+            String description, String location, Long tripId, Long userId, Long noteId, CalendarEnum calendarType,
+            Status status, String attendees, boolean isNotify) {
         this.id = id;
         this.title = title;
         this.startDate = startDate;

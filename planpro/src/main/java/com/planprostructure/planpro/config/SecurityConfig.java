@@ -27,6 +27,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -54,11 +55,19 @@ public class SecurityConfig {
                 return http
                                 .csrf(AbstractHttpConfigurer::disable)
                                 .cors(cors -> cors
-                                                .configurationSource(request -> new CorsConfiguration()
-                                                                .applyPermitDefaultValues()))
+                                                .configurationSource(request -> {
+                                                        CorsConfiguration config = new CorsConfiguration();
+                                                        config.setAllowedOriginPatterns(List.of("*"));
+                                                        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE",
+                                                                        "OPTIONS"));
+                                                        config.setAllowedHeaders(List.of("*"));
+                                                        config.setAllowCredentials(true);
+                                                        return config;
+                                                }))
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers(
                                                                 "/",
+                                                                "/chat",
                                                                 "/auth/**",
                                                                 "/api/wb/v1/auth/**",
                                                                 "/api/wb/v1/password/**",
@@ -78,7 +87,12 @@ public class SecurityConfig {
                                                                 "/swagger.json",
                                                                 "/swagger-ui/**",
                                                                 "/swagger-ui/index.html",
-                                                                "/actuator/**")
+                                                                "/actuator/**",
+                                                                "/api/v1/ai-assistant/intents",
+                                                                "/api/v1/ai-assistant/health",
+                                                                "/api/v1/ai-assistant/test",
+                                                                "/api/v1/ai-assistant/context",
+                                                                "/api/v1/ai-assistant/process")
                                                 .permitAll()
                                                 .requestMatchers(
                                                                 "/api/wb/v1/auth/setup-password",
@@ -94,7 +108,9 @@ public class SecurityConfig {
                                                                 "/api/v1/conversations/**",
                                                                 "/api/v1/message/**",
                                                                 "/api/v1/contacts/**",
-                                                                "/api/wb/v1/reminders/**")
+                                                                "/api/wb/v1/reminders/**",
+                                                                "/api/v1/ai-assistant/process",
+                                                                "/api/v1/ai-assistant/context")
                                                 .authenticated()
                                                 .requestMatchers("/ws/**").permitAll()
                                                 .anyRequest().authenticated())
