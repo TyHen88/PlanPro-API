@@ -22,9 +22,13 @@ public class UserProfileResponse {
     private String gender;
     private String profileImageUrl;
     private String dob; // Date of Birth
+    private String authProvider;
+    private Boolean isPass;
 
     @Builder
-    public UserProfileResponse(Long id, String firstName, String lastName, String username, String email, String phoneNumber, String role, String status, String gender, String profileImageUrl, String dob) {
+    public UserProfileResponse(Long id, String firstName, String lastName, String username, String email,
+            String phoneNumber, String role, String status, String gender, String profileImageUrl, String dob,
+            String authProvider, Boolean isPass) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -36,5 +40,7 @@ public class UserProfileResponse {
         this.firstName = firstName;
         this.lastName = lastName;
         this.dob = dob;
+        this.authProvider = authProvider;
+        this.isPass = isPass;
     }
 }

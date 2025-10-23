@@ -1,6 +1,5 @@
 package com.planprostructure.planpro.config;
 
-
 import jakarta.servlet.Filter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -33,7 +32,7 @@ public class CorsFilterConfiguration {
 
             CorsConfiguration configuration = new CorsConfiguration();
 
-            configuration.addAllowedOrigin(origin);
+            configuration.addAllowedOriginPattern(origin);
 
             String accessControlRequestHeaders = request.getHeader(HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS);
             if (StringUtils.hasText(accessControlRequestHeaders)) {

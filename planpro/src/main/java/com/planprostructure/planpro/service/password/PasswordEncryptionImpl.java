@@ -15,4 +15,9 @@ public class PasswordEncryptionImpl implements PasswordEncryption {
         var rawPassword = PasswordUtils.decrypt(password);
         return passwordEncoder.encode(rawPassword);
     }
+
+    @Override
+    public Boolean verifyPassword(String password, String hashedPassword) throws Exception {
+        return passwordEncoder.matches(password, hashedPassword);
+    }
 }

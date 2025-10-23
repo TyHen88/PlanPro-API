@@ -1,6 +1,7 @@
 package com.planprostructure.planpro.domain.users;
 
 import com.planprostructure.planpro.domain.UpdatableEntity;
+import com.planprostructure.planpro.enums.AuthProvider;
 import com.planprostructure.planpro.enums.Role;
 import com.planprostructure.planpro.enums.StatusUser;
 import jakarta.persistence.*;
@@ -8,13 +9,9 @@ import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 
 import java.sql.Types;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -58,16 +55,10 @@ public class Users extends UpdatableEntity {
     @Column(name = "phone")
     private String phoneNumber;
 
-    @Column(name = "sts",nullable = false, length = Types.CHAR)
+    @Column(name = "sts", nullable = false, length = Types.CHAR)
     @JdbcTypeCode(Types.CHAR)
     @Convert(converter = StatusUser.Converter.class)
     private StatusUser status;
-
-    @Column(name = "reset_token")
-    private String resetToken;
-
-    @Column(name = "reset_token_expiry")
-    private LocalDateTime resetTokenExpiry;
 
     @Column(name = "gender")
     private String gender;
@@ -75,6 +66,23 @@ public class Users extends UpdatableEntity {
     @Column(name = "profile_image_url")
     private String profileImageUrl;
 
+    @Column(name = "auth_provider")
+    @Enumerated(EnumType.STRING)
+    private AuthProvider authProvider;
 
+    @Column(name = "device_type")
+    private String deviceType;
+
+    @Column(name = "browser_name")
+    private String browserName;
+
+    @Column(name = "country")
+    private String country;
+
+    @Column(name = "city")
+    private String city;
+
+    @Column(name = "ip_address")
+    private String ipAddress;
 
 }

@@ -21,8 +21,13 @@ public class UsersController extends ProPlanRestController {
     }
 
     @PatchMapping
-    public Object updateProfile(@Valid @RequestBody  UpdateProfileRequest paylod) throws Throwable {
+    public Object updateProfile(@Valid @RequestBody UpdateProfileRequest paylod) throws Throwable {
         usersService.updateProfile(paylod);
         return ok();
+    }
+
+    @GetMapping("/all")
+    public Object getAllUsersContacts() throws Throwable {
+        return ok(usersService.getAllUsersContacts());
     }
 }

@@ -35,99 +35,106 @@ import javax.crypto.spec.SecretKeySpec;
 @RequiredArgsConstructor
 @ConditionalOnProperty(prefix = "rsa", name = "private-key", havingValue = "false", matchIfMissing = true)
 public class SecurityConfigFallback {
-    private final UnauthorizedHandler unauthorizedHandler;
-    private final AccessDeniedHandler accessDeniedHandler;
-    private final CustomJwtAuthenticationConverter customJwtAuthenticationConverter;
-    private final PasswordEncoder passwordEncoder;
+        private final UnauthorizedHandler unauthorizedHandler;
+        private final AccessDeniedHandler accessDeniedHandler;
+        private final CustomJwtAuthenticationConverter customJwtAuthenticationConverter;
+        private final PasswordEncoder passwordEncoder;
 
-    @Primary
-    @Bean("userAuthProvider")
-    public AuthenticationManager userAuthProvider(UserAuthServiceImpl userDetailsService) {
-        var authProvider = new DaoAuthenticationProvider();
-        authProvider.setPasswordEncoder(passwordEncoder);
-        authProvider.setUserDetailsService(userDetailsService);
-        authProvider.setHideUserNotFoundExceptions(false);
-        return new ProviderManager(authProvider);
-    }
+        @Primary
+        @Bean("userAuthProvider")
+        public AuthenticationManager userAuthProvider(UserAuthServiceImpl userDetailsService) {
+                var authProvider = new DaoAuthenticationProvider();
+                authProvider.setPasswordEncoder(passwordEncoder);
+                authProvider.setUserDetailsService(userDetailsService);
+                authProvider.setHideUserNotFoundExceptions(false);
+                return new ProviderManager(authProvider);
+        }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors
-                        .configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues())
-                )
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/",
-                                "/auth/**",
-                                "/api/wb/v1/auth/**",
-                                "/api/wb/v1/password/**",
-                                "/api/v1/auth/**",
-                                "/api/v1/image/**",
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**",
-                                "/v3/api-docs.yaml",
-                                "/swagger-ui.html",
-                                "/swagger-ui/index.html",
-                                "/webjars/**",
-                                "/swagger-resources/**",
-                                "/swagger-ui.html/**",
-                                "/swagger-ui.html**",
-                                "/swagger.json",
-                                "/swagger-ui/**",
-                                "/swagger-ui/index.html",
-                                "/api/**"
-                        ).permitAll()
-                        .requestMatchers(
-                                "/api/wb/v1/users/**",
-                                "/api/wb/v1/trips/**",
-                                "/api/wb/v1/files/upload-image",
-                                "/api/wb/v1/calendar/**",
-                                "/api/wb/v1/my-notes/**",
-                                "/api/wb/v1/telegram/**",
-                                "/api/wb/v1/chat/**",
-                                "/api/v1/chat/**",
-                                "/api/v1/conversations/**",
-                                "/api/v1/message/**",
-                                "/api/v1/contacts/**"
-                        ).authenticated()
-                        .anyRequest().authenticated()
-                )
-                .exceptionHandling(exceptionHandling -> exceptionHandling
-                        .accessDeniedHandler(accessDeniedHandler)
-                        .authenticationEntryPoint(unauthorizedHandler)
-                )
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        .authenticationEntryPoint(unauthorizedHandler)
-                        .accessDeniedHandler(accessDeniedHandler)
-                        .jwt(jwt -> jwt
-                                .jwtAuthenticationConverter(customJwtAuthenticationConverter)
-                        )
-                )
-                .build();
-    }
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+                return http
+                                .csrf(AbstractHttpConfigurer::disable)
+                                .cors(cors -> cors
+                                                .configurationSource(request -> new CorsConfiguration()
+                                                                .applyPermitDefaultValues()))
+                                .authorizeHttpRequests(auth -> auth
+                                                .requestMatchers(
+                                                                "/",
+                                                                "/auth/**",
+                                                                "/api/wb/v1/auth/**",
+                                                                "/api/wb/v1/password/**",
+                                                                "/api/v1/auth/**",
+                                                                "/api/v1/image/**",
+                                                                "/swagger-ui/**",
+                                                                "/v3/api-docs/**",
+                                                                "/v3/api-docs.yaml",
+                                                                "/swagger-ui.html",
+                                                                "/swagger-ui/index.html",
+                                                                "/webjars/**",
+                                                                "/swagger-resources/**",
+                                                                "/swagger-ui.html/**",
+                                                                "/swagger-ui.html**",
+                                                                "/swagger.json",
+                                                                "/swagger-ui/**",
+                                                                "/swagger-ui/index.html",
+                                                                "/actuator/**",
+                                                                "/api/v1/ai-assistant/intents",
+                                                                "/api/v1/ai-assistant/health",
+                                                                "/api/v1/ai-assistant/test",
+                                                                "/api/v1/ai-assistant/context",
+                                                                "/api/v1/ai-assistant/analyze",
+                                                                "/api/v1/ai-assistant/execute")
+                                                .permitAll()
+                                                .requestMatchers(
+                                                                "/api/wb/v1/users/**",
+                                                                "/api/wb/v1/trips/**",
+                                                                "/api/wb/v1/files/upload-image",
+                                                                "/api/wb/v1/calendar/**",
+                                                                "/api/wb/v1/my-notes/**",
+                                                                "/api/wb/v1/telegram/**",
+                                                                "/api/wb/v1/chat/**",
+                                                                "/api/v1/chat/**",
+                                                                "/api/v1/conversations/**",
+                                                                "/api/v1/message/**",
+                                                                "/api/v1/contacts/**",
+                                                                "/api/wb/v1/reminders/**",
+                                                                "/api/v1/ai-assistant/execute",
+                                                                "/api/v1/ai-assistant/analyze",
+                                                                "/api/v1/ai-assistant/chat",
+                                                                "/api/v1/ai-assistant/batch")
+                                                .authenticated()
+                                                .anyRequest().authenticated())
+                                .exceptionHandling(exceptionHandling -> exceptionHandling
+                                                .accessDeniedHandler(accessDeniedHandler)
+                                                .authenticationEntryPoint(unauthorizedHandler))
+                                .sessionManagement(session -> session
+                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                                .oauth2ResourceServer(oauth2 -> oauth2
+                                                .authenticationEntryPoint(unauthorizedHandler)
+                                                .accessDeniedHandler(accessDeniedHandler)
+                                                .jwt(jwt -> jwt
+                                                                .jwtAuthenticationConverter(
+                                                                                customJwtAuthenticationConverter)))
+                                .build();
+        }
 
-    @Bean
-    @Primary
-    JwtDecoder jwtDecoder() {
-        // Use a simple secret key for JWT decoding
-        String secret = "your-secret-key-here-make-it-long-enough-for-hs256-algorithm";
-        SecretKey key = new SecretKeySpec(secret.getBytes(), "HmacSHA256");
-        return NimbusJwtDecoder.withSecretKey(key).build();
-    }
+        @Bean
+        @Primary
+        JwtDecoder jwtDecoder() {
+                // Use a simple secret key for JWT decoding
+                String secret = "your-secret-key-here-make-it-long-enough-for-hs256-algorithm";
+                SecretKey key = new SecretKeySpec(secret.getBytes(), "HmacSHA256");
+                return NimbusJwtDecoder.withSecretKey(key).build();
+        }
 
-    @Bean
-    @Primary
-    JwtEncoder jwtEncoder() {
-        // Use a simple secret key for JWT encoding
-        String secret = "your-secret-key-here-make-it-long-enough-for-hs256-algorithm";
-        SecretKey key = new SecretKeySpec(secret.getBytes(), "HmacSHA256");
-        JWK jwk = new com.nimbusds.jose.jwk.OctetSequenceKey.Builder(key).build();
-        JWKSource<SecurityContext> jwkSource = new ImmutableJWKSet<>(new JWKSet(jwk));
-        return new NimbusJwtEncoder(jwkSource);
-    }
+        @Bean
+        @Primary
+        JwtEncoder jwtEncoder() {
+                // Use a simple secret key for JWT encoding
+                String secret = "your-secret-key-here-make-it-long-enough-for-hs256-algorithm";
+                SecretKey key = new SecretKeySpec(secret.getBytes(), "HmacSHA256");
+                JWK jwk = new com.nimbusds.jose.jwk.OctetSequenceKey.Builder(key).build();
+                JWKSource<SecurityContext> jwkSource = new ImmutableJWKSet<>(new JWKSet(jwk));
+                return new NimbusJwtEncoder(jwkSource);
+        }
 }
