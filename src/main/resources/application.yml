@@ -1,0 +1,18 @@
+spring:
+  profiles:
+    active: local
+    include: quartz
+  main:
+    allow-circular-references: true
+jwt:
+  expiration: 86400000 # 24 hours in milliseconds
+
+# RSA configuration is handled in profile-specific files
+rsa:
+  public-key: classpath:certs/public-key.pem
+  private-key: classpath:certs/private-key.pem
+
+app:
+  oauth2:
+    # Comma-separated list of authorized redirect URIs
+    authorized-redirect-uri: ${OAUTH2_REDIRECT_URI:http://localhost:3000/oauth2/redirect}

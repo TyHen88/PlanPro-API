@@ -1,0 +1,118 @@
+spring:
+  application:
+    name: planpro-api
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - email
+              - profile
+            redirect-uri: ${GOOGLE_REDIRECT_URI:https://yourdomain.com/login/oauth2/code/google}
+            authorization-grant-type: authorization_code
+            client-name: Google
+  datasource:
+    url: jdbc:postgresql://${PGHOST}:${PGPORT}/${PGDATABASE}
+    driver-class-name: org.postgresql.Driver
+    username: ${PGUSER}
+    password: ${PGPASSWORD}
+    hikari:
+      connection-timeout: 20000
+      maximum-pool-size: 5
+      minimum-idle: 1
+      idle-timeout: 300000
+      max-lifetime: 1200000
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+
+server:
+  port: ${PORT:8080}
+  shutdown: graceful
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    swagger-ui-config-url: /v3/api-docs/swagger-config
+
+logging:
+  level:
+    com.railway.demo: INFO
+    org.springframework.web: INFO
+    org.hibernate.SQL: WARN
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+      enabled: true
+      probes:
+        enabled: true
+  health:
+    db:
+      enabled: true
+    diskspace:
+      enabled: false
+    defaults:
+      enabled: true
+
+# JSONB Configuration
+json:
+  mapping:
+    pretty-print: true
+
+# Password Encryption
+password:
+  encryption:
+    key: ${PASSWORD_ENCRYPTION_KEY:mytestkeyasdddds}
+    # mytestkeyasdddds
+
+# JWT Configuration
+jwt:
+  expiration: ${JWT_EXPIRATION:86400000}
+  # 86400000 # 24 hours in milliseconds
+  issuer: planpro-app
+  secret: ${JWT_SECRET:mySecretKey}
+  # mySecretKey
+  # expirationMs: ${JWT_EXPIRATION}
+  # 86400000 # 24 hours in milliseconds
+
+# File Storage Configuration
+file:
+  server-path: /tmp/upload-files/
+  client-path: /api/v1/image
+  temp-path: ${file.server-path}/temp_qr
+  base-url: https://planpro-dev.up.railway.app${file.client-path}
+  base-image-url: https://planpro-dev.up.railway.app
+
+# Telegram Configuration
+telegram-setting:
+  enable: false  # false - Disable telegram bot for local development
+  base-url: https://api.telegram.org
+  username: planproapp_bot
+  access-token: 7845816657:AAEJxT5tVXW88cDYELYli2ttY5glQsJQq7o
+  bot-url: https://t.me/planproapp_bot
+  share-url: https://t.me/planproapp_bot
+
+# OAuth2 Configuration
+app:
+  oauth2:
+    authorized-redirect-uri: ${OAUTH2_REDIRECT_URI:https://yourdomain.com/oauth2/redirect}

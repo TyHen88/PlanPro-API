@@ -1,0 +1,136 @@
+server:
+  port: 8080
+
+spring:
+  security:
+      oauth2:
+        client:
+          registration:
+            google:
+              client-id: 1065879052327-njgaidr15era3c3a3siptr01ldg4142f.apps.googleusercontent.com
+              client-secret: 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
+              scope:
+                - email
+                - profile
+              redirect-uri: http://localhost:8080/oauth2/callback/google
+              authorization-grant-type: authorization_code
+              client-name: Google
+  ai:
+    gemini:
+      api-key: AIzaSyBSIVn_HrlfJ-HnD1oQ9qhVhcnXT92OPQI
+      base-url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent
+      model: gemini-2.0-flash
+      temperature: 0.5
+  main:
+    allow-bean-definition-overriding: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/wecom?sslmode=disable
+    username: mac_pg
+    password: 12345678
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 20000
+      maximum-pool-size: 10
+  sql:
+    init:
+      mode: never
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          lob:
+            non_contextual_creation: true
+      javax:
+        persistence:
+          schema-generation:
+            database:
+              action: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+# JSONB Configuration
+json:
+  mapping:
+    pretty-print: true
+
+# Password Encryption
+password:
+  encryption:
+    key: mytestkeyasdddds
+
+# Application URLs
+web-url: http://localhost:3001
+
+# JWT Configuration
+jwt:
+  expiration: 86400000 # 24 hours in milliseconds
+  issuer: planpro-app
+  secret: mySecretKey
+  expirationMs: 86400000 # 24 hours in milliseconds
+
+# Firebase Configuration
+firebase:
+    config-file: classpath:firebase-service-account.json
+    
+# RSA Keys Configuration
+# rsa:
+#   public-key: classpath:certs/public-key.pem
+#   private-key: classpath:certs/private-key.pem
+
+# Logging Configuration
+logging:
+  # file:
+  #   name: planpro-app.log
+  level:
+    root: info
+    org.hibernate: info
+    org.hibernate.SQL: debug
+    org.springframework.jdbc.core: trace
+    org.hibernate.orm.jdbc.bind: trace
+
+# File Storage Configuration
+file:
+  server-path: D:/upload-files/
+  client-path: /api/v1/image
+  temp-path: ${file.server-path}/temp_qr
+  base-url: http://localhost:8080${file.client-path}
+  base-image-url: http://localhost:8080
+
+# Telegram Configuration
+telegram-setting:
+  enable: false  # false - Disable telegram bot for local development
+  base-url: https://api.telegram.org
+  username: planproapp_bot
+  access-token: 7845816657:AAEJxT5tVXW88cDYELYli2ttY5glQsJQq7o
+  bot-url: https://t.me/planproapp_bot
+  share-url: https://t.me/planproapp_bot
+
+# OAuth2 Configuration
+app:
+  oauth2:
+    authorized-redirect-uri: http://localhost:3000/oauth2/redirect
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    url: /v3/api-docs
+    # disable-swagger-default-url: true
+    # operations-sorter: method
+    # tags-sorter: alpha
+    # display-request-duration: true
+    # filter: true
+    # try-it-out-enabled: true
+    # doc-expansion: none
+    # default-models-expand-depth: 1
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  show-actuator: true
+  cache:
+    disabled: true
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
