@@ -1,13 +1,8 @@
 package com.planprostructure.planpro.controller;
 
-import java.security.Principal;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.Header;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,19 +29,7 @@ public class ChatMessageController extends ProPlanRestController {
         this.chatMessageService = chatMessageService;
     }
 
-    // WebSocket endpoint for sending messages
-    @MessageMapping("/chat.send")
-    @SendTo("/topic/room/{roomId}")
-    public void sendMessage(@Payload SendMessageRequest request,
-            @Header("roomId") Long roomId,
-            Principal principal) {
-        Long userId = Long.parseLong(principal.getName());
-        chatMessageService.sendMessage(roomId, userId, request.getContent(),
-                request.getMessageType());
-    }
-
     @PostMapping("/{roomId}/send")
-    @SendTo("/topic/public")
     public ResponseEntity<ChatMessage> sendMessageViaRest(
             @PathVariable Long roomId,
             @RequestBody SendMessageRequest request,

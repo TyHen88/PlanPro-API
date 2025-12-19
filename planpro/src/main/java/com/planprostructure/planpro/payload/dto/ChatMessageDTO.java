@@ -4,6 +4,13 @@ import java.time.LocalDateTime;
 
 import com.planprostructure.planpro.domain.chatRoom.ChatMessage;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ChatMessageDTO {
     private Long id;
     private String content;
@@ -12,19 +19,4 @@ public class ChatMessageDTO {
     private Long roomId;
     private ChatMessage.MessageType messageType;
     private LocalDateTime sentAt;
-
-    public ChatMessageDTO() {
-    }
-
-    public ChatMessageDTO(Long id, String content, Long senderId, String senderName,
-            Long roomId, ChatMessage.MessageType messageType, LocalDateTime sentAt) {
-        this.id = id;
-        this.content = content;
-        this.senderId = senderId;
-        this.senderName = senderName;
-        this.roomId = roomId;
-        this.messageType = messageType;
-        this.sentAt = sentAt;
-    }
-
 }

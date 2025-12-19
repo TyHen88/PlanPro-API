@@ -51,17 +51,22 @@ public class SecurityConfig {
         }
 
         @Bean
+        public CorsConfiguration corsConfigurationSource() {
+                CorsConfiguration config = new CorsConfiguration();
+                config.setAllowedOriginPatterns(List.of("*"));
+                config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                config.addAllowedHeader("*");
+                config.setAllowCredentials(true);
+                return config;
+        }
+
+        @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 return http
                                 .csrf(AbstractHttpConfigurer::disable)
                                 .cors(cors -> cors
                                                 .configurationSource(request -> {
-                                                        CorsConfiguration config = new CorsConfiguration();
-                                                        config.setAllowedOriginPatterns(List.of("*"));
-                                                        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE",
-                                                                        "OPTIONS"));
-                                                        config.setAllowedHeaders(List.of("*"));
-                                                        config.setAllowCredentials(true);
+                                                        CorsConfiguration config = corsConfigurationSource();
                                                         return config;
                                                 }))
                                 .authorizeHttpRequests(auth -> auth
